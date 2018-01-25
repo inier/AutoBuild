@@ -1,0 +1,33 @@
+{
+  "name": "autobuilder",
+  "description": "AutoBuilder-server",
+  "version": "0.0.1474",
+  "dependencies": {
+    "body-parser": "1.18.2",
+    "cheerio": "1.0.0-rc.2",
+    "events": "1.1.1",
+    "express": "4.16.2",
+    "fs": "0.0.1-security",
+    "images": "3.0.1",
+    "jquery": "1.11.0",
+    "jszip": "3.1.5",
+    "zip-local": "0.3.4"
+  },
+  "devDependencies": {    
+    "cross-env": "^5.1.3",
+    "glob": "^7.1.2",
+    "gm": "^1.23.1",
+    "imageMagick": "^0.1.2",
+    "imagemin": "^5.3.1",
+    "imagemin-gifsicle": "^5.2.0",
+    "imagemin-jpegtran": "^5.0.2",
+    "imagemin-mozjpeg": "^7.0.0",
+    "imagemin-pngquant": "^5.0.1"    
+  },
+  "scripts": {
+    "dev": "cross-env NODE_ENV=development npm run server",
+    "prod": "cross-env NODE_ENV=production npm run server",
+    "test": "cross-env NODE_ENV=test npm run server",
+    "server": "node server"
+  }
+}
