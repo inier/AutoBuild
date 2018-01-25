@@ -1,0 +1,23 @@
+@import "./_settings";
+
+html,
+body {
+    height: 100%;
+}
+
+body {
+    padding: 0;
+    margin: 0;
+    background-color: $global-bgColor;
+}
+
+li,
+ol {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+#root {
+    height: 100%;
+}

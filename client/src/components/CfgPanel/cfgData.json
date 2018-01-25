@@ -1,0 +1,128 @@
+[
+    {
+        "text": "精品商品详情页",
+        "value": "1",
+        "isInputUrl": true,
+        "inputUrlTip": "请输入对应商品id",
+        "isInputTitle": false
+    },
+    {
+        "text": "整车商品详情页",
+        "value": "2",
+        "isInputUrl": true,
+        "inputUrlTip": "请输入对应商品id",
+        "isInputTitle": false
+    },
+    {
+        "text": "定制车商品详情页",
+        "value": "3",
+        "isInputUrl": true,
+        "inputUrlTip": "请输入对应商品id",
+        "isInputTitle": false
+    },
+    {
+        "text": "众筹商品详情页",
+        "value": "4",
+        "isInputUrl": true,
+        "inputUrlTip": "请输入对应商品id",
+        "isInputTitle": false
+    },
+    {
+        "text": "积分商城商品详情页",
+        "value": "5",
+        "isInputUrl": true,
+        "inputUrlTip": "请输入对应商品id",
+        "isInputTitle": false
+    },
+    {
+        "text": "二手车商品详情页",
+        "value": "6",
+        "isInputUrl": true,
+        "inputUrlTip": "请输入对应商品id",
+        "isInputTitle": false
+    },
+    {
+        "text": "精品配件列表",
+        "value": "21",
+        "isInputUrl": false,
+        "inputUrlTip": "",
+        "isInputTitle": false
+    },
+    {
+        "text": "我要买车列表",
+        "value": "22",
+        "isInputUrl": false,
+        "inputUrlTip": "",
+        "isInputTitle": false
+    },
+    {
+        "text": "定制车列表",
+        "value": "23",
+        "isInputUrl": false,
+        "inputUrlTip": "",
+        "isInputTitle": false
+    },
+    {
+        "text": "众筹商品列表",
+        "value": "24",
+        "isInputUrl": false,
+        "inputUrlTip": "",
+        "isInputTitle": false
+    },
+    {
+        "text": "会员尊享频道首页",
+        "value": "25",
+        "isInputUrl": false,
+        "inputUrlTip": "",
+        "isInputTitle": false
+    },
+    {
+        "text": "二手车频道首页",
+        "value": "26",
+        "isInputUrl": false,
+        "inputUrlTip": "",
+        "isInputTitle": false
+    },
+    {
+        "text": "iFrame嵌入，带header",
+        "value": "50",
+        "isInputUrl": true,
+        "inputUrlTip": "请输入跳转链接(完整地址)",
+        "isInputTitle": true
+    },
+    {
+        "text": "跳转系统自带浏览器，window.open",
+        "value": "51",
+        "isInputUrl": true,
+        "inputUrlTip": "请输入跳转链接(完整地址)",
+        "isInputTitle": false
+    },
+    {
+        "text": "跳转内部浏览器, window.open",
+        "value": "52",
+        "isInputUrl": true,
+        "inputUrlTip": "请输入跳转链接(完整地址)",
+        "isInputTitle": false
+    },
+    {
+        "text": "自定义跳转到移动端内部页面（app、h5、微信）",
+        "value": "60",
+        "isInputUrl": true,
+        "inputUrlTip": "请输入跳转链接(app的相对路径)",
+        "isInputTitle": false
+    },
+    {
+        "text": "经销商查询",
+        "value": "91",
+        "isInputUrl": false,
+        "inputUrlTip": "",
+        "isInputTitle": false
+    },
+    {
+        "text": "预约试驾",
+        "value": "92",
+        "isInputUrl": false,
+        "inputUrlTip": "",
+        "isInputTitle": false
+    }
+]

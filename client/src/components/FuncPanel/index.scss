@@ -1,0 +1,16 @@
+.func-panel{
+    padding: 0 16px 30px 16px;
+    text-align: center;
+}
+
+.nav {
+    width: 100px;
+    height: 100%;
+    li {
+        line-height: 44px;
+        padding: 0 10px;
+        background-color: rgb(226, 205, 14);
+        border-bottom: 1px solid #dedede;
+        cursor: pointer;
+    }
+}
