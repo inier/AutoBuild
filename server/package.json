@@ -25,8 +25,8 @@
     "imagemin-pngquant": "^5.0.1"    
   },
   "scripts": {
-    "dev": "cross-env NODE_ENV=development npm run server",
-    "prod": "cross-env NODE_ENV=production npm run server",
+    "start": "cross-env NODE_ENV=development npm run server",
+    "build": "cross-env NODE_ENV=production npm run server",
     "test": "cross-env NODE_ENV=test npm run server",
     "server": "node server"
   }

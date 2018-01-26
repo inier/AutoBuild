@@ -97,7 +97,6 @@ class CfgPanel extends Component {
     this.updateDragInfo({
       [tType]: e.target.value
     });
-
   }
 
   render() {
@@ -115,7 +114,7 @@ class CfgPanel extends Component {
               placeholder="选择跳转页面类型"
               optionFilterProp="children"
               filterOption={(input, option) => option.props.searchVal.toLowerCase().indexOf(input.toLowerCase()) >= 0}
-              style={{ width: '100%'}}
+              style={{ width: '100%' }}
               value={this.state.typeData.dataType}
               onChange={this.handleSelectCg}>
               {options}
@@ -132,8 +131,8 @@ class CfgPanel extends Component {
                   data-type="url"
                   placeholder={this.state.typeData.inputUrlTip}
                   onChange={this.handleInputCg}
-                  value={this.state.typeData.url}
-                  defaultValue={this.state.typeData.url}
+                  value={this.state.url}
+                  defaultValue={this.state.url}
                   autosize={{ minRows: 2, maxRows: 6 }} />
               </FormItem>
             )

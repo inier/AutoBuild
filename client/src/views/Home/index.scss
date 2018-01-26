@@ -4,30 +4,8 @@
 :local {    
 }
 
-:global {
-    .ant-layout-header{
-        height: $header-H;
-        line-height: $header-H;
-        vertical-align: middle;
-    }
-    .ant-layout-footer{
-        height: $footer-H;
-        line-height: $footer-H;
-        padding-top: 0;
-        vertical-align: middle;
-    }
-    .ant-layout{
-        background-color: $global-bgColor;
-    }
-    .ant-layout-content{
-        padding: 20px;
-    }
-    .ant-collapse{
-        min-height: 450px;
-    }
+:global {    
     .ant-collapse-borderless > .ant-collapse-item{
         border: 0;
     }
 }
-
-

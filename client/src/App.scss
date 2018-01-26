@@ -1,4 +1,7 @@
+@import "./_settings";
+
 .App {
+  height: 100%;
   text-align: center;
 }
 
@@ -21,23 +24,38 @@
 .App-intro {
   font-size: large;
 }
+
 .router{
+  display:inline-block;
+  //display:none;
   li{
     display:inline-block;
     padding: 0 20px;
   }
 }
-
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+// css-modules处理
+:local {    
 }
-.ant-form-item-label,
-.ant-form-item-control{
-    text-align: left;
-    line-height: 30px;
+
+:global {
+    .ant-layout-header{
+        height: $header-H;
+        line-height: $header-H;
+        vertical-align: middle;
+    }
+    .ant-layout-footer{
+        height: $footer-H;
+        line-height: $footer-H;
+        padding-top: 0;
+        vertical-align: middle;
+    }
+    .ant-layout{        
+        height: 100%;      
+        background-color: inherit;  
+    }
+    .ant-layout-content{
+        padding: 20px;
+    }
+    .ant-collapse{        
+    }    
 }

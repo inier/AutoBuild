@@ -1,7 +1,7 @@
 // use to build a header
 import React from "react";
 import { Icon } from "antd";
-import styles from "./index.scss";
+import "./index.scss";
 
 const Title = props => {
   return (

@@ -1,0 +1,14 @@
+//css modules处理
+:local{
+    .imgCoporation{
+        min-width: 900px;
+        border: 1px dashed grey;
+        text-align: center;
+        &:empty{
+            border: none;
+        }
+        img {        
+            width: 100%;
+        }
+    }
+}

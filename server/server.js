@@ -2,7 +2,7 @@
 // 创建一个服务器
 var express = require('express');
 var fs = require('fs');
-var path=require("path");
+var path = require("path");
 
 var utils = require('./utils/utils');
 // 解析 post 请求 参数
@@ -27,7 +27,7 @@ var port = utils.normalizePort(config.port || '8080');
 // 打印输出端口号
 //console.log('当前监听端口号为： ' + port);
 
-var root = 'build';
+var root = '../client/build';
 var downDIST = `./build`;
 var autoBuildBasePath = './components/AutoBuild';
 
@@ -60,6 +60,11 @@ app.get('/', (req, res) => {
     res.end(data);
   });
 });
+
+//上传组件本地预览（不支持远程提交）
+app.post('/postImgLocal', (req, res) => {
+  res.send({ code: 200, msg: "post请求成功" });
+})
 
 app.use('/preview_pc', express.static(path.join(__dirname, '/components/AutoBuild/public/pc')));
 

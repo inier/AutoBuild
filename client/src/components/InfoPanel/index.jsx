@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { inject, observer } from 'mobx-react';
-import { Form, Input, InputNumber, Radio } from 'antd';
+import { Form, Input, Radio } from 'antd';
 
 import "./index.scss";
 

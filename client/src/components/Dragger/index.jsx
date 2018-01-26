@@ -49,7 +49,7 @@ class Drag extends Component {
       ]
     };
   }
-  move(e) {
+  move = (e) => {
     const startX = e.clientX;
     const startY = e.clientY;
     //console.log(startX,startY);
@@ -67,7 +67,7 @@ class Drag extends Component {
     });
     e.stopPropagation();
   }
-  resizeStart(e) {
+  resizeStart = (e) => {
     doc.body.style.userSelect = "none";
     const startX = e.clientX;
     const startY = e.clientY;
@@ -81,7 +81,7 @@ class Drag extends Component {
     //doc.addEventListener('mouseout', this.handleMouseOut.bind(this))
     e.stopPropagation();
   }
-  resizeEnd(e) {
+  resizeEnd = (e) => {
     doc.body.style.userSelect = "";
 
     const lastW = this.state.width;
@@ -100,14 +100,14 @@ class Drag extends Component {
 
     //  回调 给 父组件  的方法
   }
-  handleMouseOut(e) {
+  handleMouseOut = (e) => {
     console.log("out");
     doc.removeEventListener("mousemove", this.move, false);
     doc.addEventListener("mouseup", this.resizeEnd.bind(this));
 
     e.stopPropagation();
   }
-  handleMouseUp(e) {
+  handleMouseUp = (e) => {
     const obj = {
       width: this.state.width,
       height: this.state.height,
@@ -118,8 +118,7 @@ class Drag extends Component {
     this.props.handleMouseUp(obj);
     e.stopPropagation();
   }
-  componentWillUnmount() {}
-  dragMove(ve, x, y) {
+  dragMove = (ve, x, y) => {
     // x,y , 获取 拖拽的   x,y
     const obj = {
       left: x,
@@ -131,7 +130,7 @@ class Drag extends Component {
     this.props.dragMove(obj);
   }
   // 那个插件 传过来 的数据 ，这这里修改
-  changeValue(data) {
+  changeValue = (data) => {
     const arr = this.state.attrList;
     // 改变 input 框的 对应 数组的id
     const id = data.id;
@@ -166,17 +165,13 @@ class Drag extends Component {
   }
   // 删除 组建 点击删除
   // 向父组件 同行，利用this.props
-  doDelete(data) {
-    const delData = {
-      id: this.props.id,
-      parentId: this.props.parentId
-    };
-    this.props.delDragArea(delData);
+  doDelete = () => {    
+    this.props.delDragArea();
 
     // 阻止 事件冒泡==============
   }
   // 清空 input 框 value 值
-  clearInputVal(data) {
+  clearInputVal = (data) => {
     console.log("dragger" + data);
     const id = data;
     const temArr = this.state.attrList;
@@ -201,7 +196,7 @@ class Drag extends Component {
     };
     return (
       <Dragger
-        onMove={this.dragMove.bind(this)}
+        onMove={this.dragMove}
         bounds="parent"
         style={styleObj}
         className="clkArea"
@@ -209,15 +204,15 @@ class Drag extends Component {
         <div className="content">
           simple drag
           {/* 点击删除 */}
-          <DelBtn clickCb={this.doDelete.bind(this)} />
+          <DelBtn clickCb={this.doDelete} />
 
           {/* 拖住啊，改变w，h */}
           <i
             className="dragable"
-            onMouseDown={this.resizeStart.bind(this)}
-            onMouseUp={this.handleMouseUp.bind(this)}
+            onMouseDown={this.resizeStart}
+            onMouseUp={this.handleMouseUp}
 
-            //onMouseOut={this.handleMouseOut.bind(this)}
+          //onMouseOut={this.handleMouseOut.bind(this)}
           />
           <div className="right-coperation">
             {this.state.attrList.length &&
@@ -229,8 +224,8 @@ class Drag extends Component {
                     type={elm.type}
                     value={elm.value}
                     id={elm.id}
-                    clearInputVal={this.clearInputVal.bind(this)}
-                    changeValue={this.changeValue.bind(this)}
+                    clearInputVal={this.clearInputVal}
+                    changeValue={this.changeValue}
                   />
                 );
               })}

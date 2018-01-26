@@ -2,10 +2,10 @@
 import React from "react";
 import "./index.scss";
 
-const Mine = props => {
+const Mine = (props) => {
   return (
     <div className="mine">      
-      {props.children}
+      <h2>帮助中心</h2>
     </div>
   );
 };
