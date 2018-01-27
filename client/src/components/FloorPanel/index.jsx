@@ -16,19 +16,19 @@ import Drag from "../Dragger";
 class FloorPanel extends Component {
   constructor(props) {
     super(props);
-    this.store = props.UIStore;    
+    this.store = props.UIStore;
     this.state = {
-      isActive: !!this.store.getStoreItem(props.id).isActive
+      ...this.props
     };
+    console.log(props);
   }
 
   dragHandleClick = (e) => {
     this.store.dragActive(e.target.id);
   }
 
-  choosedImg = (e) => {
-    e.stopPropagation();
-    this.store.floorActive(e.target.id);
+  handleClick = (e) => {
+    this.props.handleClick(e, this.props.index);
   }
 
   // 图片onload 事件
@@ -38,16 +38,11 @@ class FloorPanel extends Component {
     const id = trgt.id;
     const width = trgt.offsetWidth;
     const height = trgt.offsetHeight;
-    const tplArr = this.store.imgSrc;
 
-    tplArr.map((elm, idx) => {
-      if (elm.id == id) {
-        //  如果这个对象没有 widht ,height 则设置，
-        this.store.updateDragCfg({
-          width: !elm.width && width,
-          height: !elm.height && height
-        });
-      }
+    //  如果这个对象没有 widht ,height 则设置，
+    this.store.updateDragCfg({
+      width,
+      height
     });
   }
 
@@ -55,7 +50,7 @@ class FloorPanel extends Component {
   acordIdChangeData(changeData, sourceData) {
     const parentdId = (changeData && changeData.parentId) || "";
     const childId = (changeData && changeData.id) || "";
-    //  两次轮询
+    // 两次轮询
     sourceData &&
       sourceData.map((elm, idx) => {
         if (elm.id == parentdId) {
@@ -120,7 +115,7 @@ class FloorPanel extends Component {
 
   // 需要对 this.state.imgSrc 数组，进行 改变 left，top，width，height
   // 删除 点击区域
-  delDragArea = (data) => {    
+  delDragArea = (data) => {
     // 改变数据
     this.store.delActiveDragBox();
   }
@@ -147,27 +142,27 @@ class FloorPanel extends Component {
     console.log("start render after componentWillMount");
 
     console.log("------------------------------------------");
-    const {id, src, clkArr} = this.props;
+
     return (
-      <div className="img_wrap" key={this.props.key}>
+      <div className="img_wrap" key={this.props.index}>
         <div
           className={
             this.state.isActive ? "img_box bounds ac" : "img_box bounds"
           }
-          id={id}
-          onClick={this.choosedImg}
+          id={this.state.id}
+          onClick={this.props.handleClick}
         >
           {/* 删除图片 ===按钮 */}
           {/* <i className="remove-img"></i> */}
-          <DelBtn needData={id} clickCb={this.delImg} />
-          <img src={src} alt="" id={id} onLoad={this.imgOnload} />
-          {clkArr &&
-            clkArr.map((elm, index) => {
+          <DelBtn needData={this.state.id} clickCb={this.delImg} />
+          <img src={this.state.src} alt="" id={this.state.id} onLoad={this.imgOnload} />
+          {this.state.clkArr &&
+            this.state.clkArr.map((elm, index) => {
               return (
                 <Drag
                   key={index}
                   id={elm.id}
-                  parentId={id}
+                  parentId={this.state.id}
                   onClick={this.dragHandleClick}
                   dragMove={this.dragMove}
                   handleMouseUp={this.handleMouseUp}

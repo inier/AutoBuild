@@ -1,29 +1,35 @@
-.uploadIcon {
-    position: relative;
-    margin: 5px auto;
-    padding: 10px 20px 15px;
-    border: 1px dashed #d9d9d9;
-    border-radius: 4px;
-    background-color: #fafafa;
-    text-align: center;
+@import "../../_settings";
+.iconUpload {
     cursor: pointer;
-    -webkit-transition: border-color 0.3s ease;
-    transition: border-color 0.3s ease;
-    vertical-align: top;    
     display: table;
+    position: absolute;
+    bottom: 0;
+    margin: 10px auto;
+    padding: 15px;
+    border-radius: 50%;
+    text-align: center;
+    color: #fff;
+    vertical-align: top;
+    background-color: $global-primary;
+    -webkit-box-shadow: 0 0 15px $global-color-shadow;
+    box-shadow: 0 0 15px $global-color-shadow;
+    -webkit-transition: all 0.3s ease-in-out;
+    transition: all 0.3s ease-in-out;
     &:hover {
-        border-color: #1890ff;
+        color: #fff;
+        background-color: darken($global-primary, 15%);
+        -webkit-transition: all 0.3s ease-in-out;
+        transition: all 0.3s ease-in-out;
     }
-    .content {        
-        text-align: center;        
-        font-size: 14px;    
+    .content {
+        text-align: center;
+        font-size: 14px;
         line-height: 1;
-        color: #666;
-    } 
+    }
     .input {
         width: 100%;
         height: 100%;
-        cursor: pointer;        
+        cursor: pointer;
         outline: medium none;
         position: absolute;
         filter: alpha(opacity=0);

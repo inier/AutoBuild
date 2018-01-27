@@ -1,7 +1,8 @@
 //css modules处理
 :local{
     .imgCoporation{
-        min-width: 900px;
+        overflow-y: auto;
+        //min-width: 900px;
         border: 1px dashed grey;
         text-align: center;
         &:empty{

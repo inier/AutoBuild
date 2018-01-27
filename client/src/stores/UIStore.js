@@ -32,13 +32,11 @@ class UIStore {
   @observable choosed = {};
 
   //更新对象
-  @action
   updateObjData = (srcObj, data) => {
     Object.assign(srcObj, data);
   }
 
   //更新数组
-  @action
   updateArrData = (srcArr, oldValue, newValue) => {
     srcArr.map((it, idx) => {
       if (it == "oldValue") {
@@ -48,60 +46,60 @@ class UIStore {
   }
 
   //追加数组
-  @action
   pushArrData = (srcArr, data) => {
     srcArr.push(data);
   }
 
   //删除数组中的指定项
-  @action
   delArrDataByIndex = (srcArr, index) => {
     srcArr.splice(index, 1);
   }
 
-
   // 选择 网页 类型 pc，app
+  @action
   onSetPageType = (e) => {
-    console.log('radio checked', e.target.value);
     this.updateObjData(this, {
       pageType: e.target.value
     });
   }
 
   // 设置 生成网页 title
-  onSetPageTitle(e) {
+  @action
+  onSetPageTitle = (e) => {
     this.updateObjData(this, {
       pageTitle: e.target.value
     });
   }
 
   // 设置 生成网页 keyword
-  onSetPageKeyword(e) {
+  @action
+  onSetPageKeyword = (e) => {
     this.updateObjData(this, {
       pageKeyword: e.target.value
     });
   }
 
   // 设置 生成网页 description
-  onSetPageDecription(e) {
+  @action
+  onSetPageDecription = (e) => {
     this.updateObjData(this, {
       pageDescription: e.target.value
     });
   }
-
-  floorDataPush(itemKey, obj) {
-    this.pushArrData(this[itemKey], obj);
+  // 楼层数组 imgSrc 追加数据
+  @action
+  floorDataPush = (obj) => {
+    this.pushArrData(this.imgSrc, obj);
   }
 
-  getFloorItem(id) {
-    this.imgSrc.map((item, idx) => {
-      if (item.id == id) {
-        return item;
-      }
-    });
+  // 根据楼层id获得对应楼层的配置数据
+  @action
+  getFloorItem = (index) => {
+    return this.imgSrc[index];
   }
 
-  setChoosedImg(data) {
+  @action
+  setChoosedImg = (data) => {
     this.imgSrc.map((item, idx) => {
       if (item.id == this.floorOnId) {
         this.updateObjData(item, data);
@@ -109,74 +107,101 @@ class UIStore {
     });
   }
 
-  setFloorOnId(id) {
+  @action
+  setFloorOnId = (id) => {
     this.updateObjData(this, {
       floorOnId: id
     });
   }
+  @observable abc = false;
+  @action
+  floorActive = (id, index) => {
+    if (!this.floorOnId && id != this.floorOnId) {
+      console.log("Active Floor:"+ id + "- Index:"+ index);     
+      this.setFloorOnId(id);
+      // var tArr = [...observable(this.imgSrc).slice()];
+      // console.log(tArr);
+      // tArr[index].isActive = !this.abc;
+      // this.imgSrc = tArr;
+      //this.updateObjData(this.imgSrc, tArr);
+      // var tArr = [...this.imgSrc];
+      // this.updateObjData(tArr[index], {
+      //   isActive: true
+      // });
+      // this.imgSrc = tArr;
+    }
 
-  floorActive(id){
-    this.imgSrc.map((item) => {
-      if(item.id == this.floorOnId){
-        item.isActive = true;
-        this.setFloorOnId(id);
-      }else{
-        item.isActive = false;
-      }
-    });
+
+    // .map((item) => {
+    //   if (item.id == this.floorOnId) {
+    //     this.updateObjData(item, {
+    //       isActive: true
+    //     });        
+    //   } else {
+    //     this.updateObjData(item, {
+    //       isActive: false
+    //     });
+    //   }
+    // });
   }
 
-  setDragId(id) {
+  @action
+  setDragId = (id) => {
     this.updateObjData(this, {
       dragOnId: id
     });
   }
 
-  dragActive(id){
+  @action
+  dragActive = (id) => {
     this.imgSrc.map((item) => {
-      if(item.id == this.floorOnId){
-        var clkArr = item.clkArr;        
+      this.setDragId(id);
+      if (item.id == this.floorOnId) {
+        var clkArr = item.clkArr;
         clkArr.map((it, idx) => {
-          if (it.id == this.dragOnId) {                     
-            it.isActive = true;
-            this.setDragId(id);
-          }else{
-            it.isActive = false;
+          if (it.id == this.dragOnId) {
+            this.updateObjData(it, {
+              isActive: true
+            });
+          } else {
+            this.updateObjData(it, {
+              isActive: false
+            });
           }
-        }); 
-      }     
+        });
+      }
     });
   }
 
   @action
-  setDragData(floorOn, data) {
-    Object.assign(floorOn, data);
-  }
-
-  updateDragCfg(data) {
-    this.imgSrc.map((item) => {      
+  updateDragCfg = (data) => {     
+    var tt = this.imgSrc.map((item) => {
       if (item.id == this.floorOnId) {
         var clkArr = item.clkArr;
         if (clkArr) {
           clkArr.map((it, idx) => {
-            if (it.id == this.dragOnId) {              
+            if (it.id == this.dragOnId) {
+              
               this.updateObjData(it, data);
             }
           });
         }
       }
     });
+    console.log(this.imgSrc);
+    console.log(tt);
   }
 
-  delActiveDragBox() {
+  @action
+  delActiveDragBox = () => {
     this.imgSrc.map((item) => {
       console.log(item);
       if (item.id == this.floorOnId) {
         var clkArr = item.clkArr;
         if (clkArr) {
           clkArr.map((it, idx) => {
-            if (it.id == this.dragOnId) {              
-                this.delArrDataByIndex(clkArr, it);              
+            if (it.id == this.dragOnId) {
+              this.delArrDataByIndex(clkArr, it);
             }
           });
         }
@@ -184,12 +209,7 @@ class UIStore {
     });
   }
 
-  updateDragInfo(data) {
-    this.updateDragCfg(data);
-  }
 
-
-  
 
 
   // test

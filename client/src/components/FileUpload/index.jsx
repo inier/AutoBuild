@@ -23,7 +23,6 @@ function beforeUpload(file) {
 }
 
 @inject("UIStore")
-@observer
 class FileUpload extends Component {
   constructor(props) {
     super(props);
@@ -67,12 +66,12 @@ class FileUpload extends Component {
       };
 
       var obj = {
-        id: +new Date().getTime(),
+        id: new Date().getTime() + "",
         src: src,
         isActive: false
       };
 
-      this.store.floorDataPush("imgSrc", obj);
+      this.store.floorDataPush(obj);
     };
   }
 

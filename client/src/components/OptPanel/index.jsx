@@ -12,12 +12,20 @@ class OptPanel extends Component {
     super(props);
     this.store = props.UIStore;
   }
-  floorHandleClick = (e) =>{    
-    this.store.floorActive(e.target.id);
+
+  handleClick = (e, index) => {
+    console.log("handleClick");
+    this.store.floorActive(e.target.id, index);
   }
+
   render() {
-    var floors = this.store.imgSrc.map((elm, idx) => {      
-      return (<FloorPanel key={idx} {...elm} onClick={this.floorHandleClick} />);
+    var floors = this.store.imgSrc.map((elm, idx) => {
+      var tProps = {
+        id: elm.id,
+        src: elm.src,
+        clkArr: elm.clkArr
+      };      
+      return (<FloorPanel key={elm.id} index={idx} handleClick={this.handleClick} {...tProps} />);
     });
 
     return (

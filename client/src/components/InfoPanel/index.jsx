@@ -28,22 +28,6 @@ class InfoPanel extends Component {
     this.store = props.UIStore;
   }
 
-  handleChangePageType = (e)=>{
-    this.props.UIStore.onSetPageType(e);
-  };
-
-  handleChangePageTitle = (e)=>{
-    this.props.UIStore.onSetPageTitle(e);
-  };
-
-  handleChangePageKeyword = (e)=>{
-    this.props.UIStore.onSetPageKeyword(e);
-  };
-
-  handleChangePageDecription = (e)=>{
-    this.props.UIStore.onSetPageDecription(e);
-  };
-
   render(props) {
     return (
       <Form>
@@ -53,7 +37,7 @@ class InfoPanel extends Component {
           label="专题类型："
         >
           <RadioGroup
-            onChange={this.handleChangePageType}
+            onChange={this.store.onSetPageType}
             defaultValue={this.store.pageType}>
             <RadioButton value="pc">PC端</RadioButton>
             <RadioButton value="app">APP端</RadioButton>
@@ -67,7 +51,7 @@ class InfoPanel extends Component {
         >
           <TextArea
             placeholder="请输入专题页 名称"
-            onChange={this.handleChangePageTitle}
+            onChange={this.store.onSetPageTitle}
             value={this.store.pageTitle}
             autosize={{ minRows: 1, maxRows: 2 }} />
         </FormItem>
@@ -77,7 +61,7 @@ class InfoPanel extends Component {
         >
           <TextArea
             placeholder="请输入专题页 关键字"
-            onChange={this.handleChangePageKeyword}
+            onChange={this.store.onSetPageKeyword}
             value={this.store.pageKeyword}
             autosize={{ minRows: 2, maxRows: 4 }} />
         </FormItem>
@@ -87,7 +71,7 @@ class InfoPanel extends Component {
         >
           <TextArea
             placeholder="请输入专题页 描述"
-            onChange={this.handleChangePageDecription}
+            onChange={this.store.onSetPageDecription}
             value={this.store.pageDescription}
             autosize={{ minRows: 4, maxRows: 8 }} />
         </FormItem>

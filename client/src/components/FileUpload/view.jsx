@@ -7,10 +7,10 @@ const FileUploadIcon = props => {
         props.onChange(e);
     };
     return (
-        <div className="uploadIcon">
+        <div className="iconUpload">
             <div className="content">
-            <Icon type="plus" style={{fontSize:32, color: "#999"}} />
-            <div>{props.content}</div>
+                <Icon type="plus" style={{ fontSize: 36 }} />
+                {/* <div>{props.content}</div> */}
             </div>
             <input type="file" className="input" onChange={this.handleChange} accept="" />
         </div>

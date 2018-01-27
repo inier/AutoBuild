@@ -10,9 +10,8 @@ import "./index.scss";
 class DelBtn extends Component {
   constructor(props) {
     super(props);
-    this.handleClick = this.handleClick.bind(this);
   }
-  handleClick(e) {
+  handleClick = (e) => {
     const data = this.props.needData;
     typeof this.props.clickCb === "function" && this.props.clickCb(data);
   }

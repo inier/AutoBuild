@@ -1,61 +1,67 @@
 @import "./_settings";
-
 .App {
-  height: 100%;
-  text-align: center;
+    height: 100%;
+    text-align: center;
 }
 
 .App-logo {
-  animation: App-logo-spin infinite 20s linear;
-  height: 80px;
+    animation: App-logo-spin infinite 20s linear;
+    height: 80px;
 }
 
 .App-header {
-  background-color: #222;
-  height: 150px;
-  padding: 20px;
-  color: white;
+    background-color: #222;
+    height: 150px;
+    padding: 20px;
+    color: white;
 }
 
 .App-title {
-  font-size: 1.5em;
+    font-size: 1.5em;
 }
 
 .App-intro {
-  font-size: large;
+    font-size: large;
 }
 
-.router{
-  display:inline-block;
-  //display:none;
-  li{
-    display:inline-block;
-    padding: 0 20px;
-  }
+.router {
+    display: inline-block; //display:none;
+    li {
+        display: inline-block;
+        padding: 0 20px;
+    }
 }
+
 // css-modules处理
-:local {    
-}
+:local {}
 
 :global {
-    .ant-layout-header{
+    .ant-layout-header {
         height: $header-H;
         line-height: $header-H;
         vertical-align: middle;
     }
-    .ant-layout-footer{
+    .ant-layout-footer {
         height: $footer-H;
         line-height: $footer-H;
         padding-top: 0;
         vertical-align: middle;
     }
-    .ant-layout{        
-        height: 100%;      
-        background-color: inherit;  
+    .ant-layout {
+        height: 100%;
+        background-color: inherit;
     }
-    .ant-layout-content{
+    .ant-layout-content {
+        position: relative;
         padding: 20px;
+        -webkit-transition: all 0.3s ease-in-out;
+        transition: all 0.3s ease-in-out;
+        &:hover {
+            -webkit-box-shadow: inset 0 0 25px lighten($global-color-shadow, 15%);
+            box-shadow: inset 0 0 25px lighten($global-color-shadow, 15%);
+            -webkit-transition: all 0.3s ease-in-out;
+            transition: all 0.3s ease-in-out;
+        }
     }
-    .ant-collapse{        
-    }    
+    .ant-collapse {}
 }
