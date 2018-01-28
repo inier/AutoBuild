@@ -1,5 +1,5 @@
-import { observable, action, computed } from 'mobx';
-import ApiUrls from '../transport-layer/ApiUrl';
+import { observable, action, computed } from "mobx";
+import ApiUrls from "../transport-layer/ApiUrl";
 
 /**
  * 保存token等信息和其他UI相关，但是与业务无关的状态。
@@ -8,7 +8,7 @@ class UIStore {
   constructor(rootStore, persistData) {
     this.rootStore = rootStore;
     this.persistData = persistData;
-    this.persistData.set('count', this);
+    this.persistData.set("count", this);
     this.setCount(0);
   }
 
@@ -32,188 +32,288 @@ class UIStore {
   @observable choosed = {};
 
   //更新对象
-  updateObjData = (srcObj, data) => {
+  updateRootData = (srcObj, data) => {
     Object.assign(srcObj, data);
-  }
+  };
 
-  //更新数组
-  updateArrData = (srcArr, oldValue, newValue) => {
-    srcArr.map((it, idx) => {
-      if (it == "oldValue") {
-        srcArr[idx] = newValue;
+  //ListItem 读取
+  getListItem = (list, id) => {
+    return list[this.getListItemIndex(list, id)];
+  };
+  getListItemIndex = (list, id) => {
+    var result;
+    list.forEach((it, index) => {
+      if (it.id === id) {
+        result = index;
       }
     });
-  }
+    return result;
+  };
+  //List更新
+  setListItem = (list, data) => {
+    list.slice().forEach((item, index) => {
+      if (item.id === this.floorOnId) {
+        for (var prop in data) {
+          if (data.hasOwnProperty(prop)) {
+            list[index][prop] = data[prop];
+          }
+        }
+      }
+    });
+  };
+  //List追加
+  addListItem = (list, item) => {
+    list.push(item);
+  };
+  //删除List中的指定项
+  delListItem = (list, id) => {
+    // list = list.slice().filter(it => {
+    //   return it.id != id;
+    //   //srcArr.splice(index, 1); //有bug
+    // });
+    list.splice(this.getListItemIndex(list, id), 1);
+  };
 
-  //追加数组
-  pushArrData = (srcArr, data) => {
-    srcArr.push(data);
-  }
+  getSubListItem = (pListName, cListName, item) => {
+    const tResult = this[pListName].slice().filter((item, pIndex) => {
+      return item.id === this.floorOnId;
+    });
 
-  //删除数组中的指定项
-  delArrDataByIndex = (srcArr, index) => {
-    srcArr.splice(index, 1);
-  }
+    return tResult[cListName].filter((it, cIndex) => {
+      return it.id === this.dragOnId;
+    });
+  };
+  //List的子级数据追加
+  // genes: 为父->子的多级基因链,如  [pArr,cArr]
+  // item: {k:v}
+  addSubListItem = (pListName, cListName, data) => {
+    var pList = this[pListName];
+    pList.forEach((item, pIndex) => {
+      if (item.id === this.floorOnId) {
+        var cList = item[cListName];
+        if (cList) {
+          this.addListItem(pList[pIndex][cListName], data);
+        } else {
+          pList[pIndex][cListName] = [];
+          this.addListItem(pList[pIndex][cListName], data);
+        }
+      }
+    });
+  };
+  setSubListItem = (pListName, cListName, data) => {
+    var pList = this[pListName].slice();
+    pList.forEach((item, pIndex) => {
+      if (item.id === this.floorOnId) {
+        var cList = item[cListName];
+        if (cList) {
+          cList.forEach((it, cIndex) => {
+            if (it.id === this.dragOnId) {
+              for (var prop in data) {
+                if (data.hasOwnProperty(prop)) {
+                  pList[pIndex][cListName][cIndex][prop] = data[prop];
+                }
+              }
+            }
+          });
+        }
+      }
+    });
+  };
+  delSubListItem = (pListName, cListName) => {
+    var pList = this[pListName].slice();
+    pList.forEach((item, pIndex) => {
+      if (item.id === this.floorOnId) {
+        var cList = item[cListName];
+        if (cList) {
+          cList.forEach((it, cIndex) => {
+            pList[pIndex][cListName] = cList.filter(it => {
+              return it.id !== this.dragOnId;
+            });
+          });
+        }
+      }
+    });
+  };
 
   // 选择 网页 类型 pc，app
   @action
-  onSetPageType = (e) => {
-    this.updateObjData(this, {
+  onSetPageType = e => {
+    this.updateRootData(this, {
       pageType: e.target.value
     });
-  }
+  };
 
   // 设置 生成网页 title
   @action
-  onSetPageTitle = (e) => {
-    this.updateObjData(this, {
+  onSetPageTitle = e => {
+    this.updateRootData(this, {
       pageTitle: e.target.value
     });
-  }
+  };
 
   // 设置 生成网页 keyword
   @action
-  onSetPageKeyword = (e) => {
-    this.updateObjData(this, {
+  onSetPageKeyword = e => {
+    this.updateRootData(this, {
       pageKeyword: e.target.value
     });
-  }
+  };
 
   // 设置 生成网页 description
   @action
-  onSetPageDecription = (e) => {
-    this.updateObjData(this, {
+  onSetPageDecription = e => {
+    this.updateRootData(this, {
       pageDescription: e.target.value
     });
-  }
+  };
+
   // 楼层数组 imgSrc 追加数据
   @action
-  floorDataPush = (obj) => {
-    this.pushArrData(this.imgSrc, obj);
-  }
+  floorDataPush = obj => {
+    this.addListItem(this.imgSrc, obj);
+  };
 
   // 根据楼层id获得对应楼层的配置数据
   @action
-  getFloorItem = (index) => {
-    return this.imgSrc[index];
-  }
+  getFloorItem = id => {
+    return this.getListItem(this.imgSrc, id);
+  };
 
   @action
-  setChoosedImg = (data) => {
-    this.imgSrc.map((item, idx) => {
-      if (item.id == this.floorOnId) {
-        this.updateObjData(item, data);
-      }
-    });
-  }
-
-  @action
-  setFloorOnId = (id) => {
-    this.updateObjData(this, {
+  setFloorOnId = id => {
+    this.updateRootData(this, {
       floorOnId: id
     });
-  }
-  @observable abc = false;
+  };
+
+  @action
+  setFloorData = data => {
+    this.imgSrc.forEach((item, idx) => {
+      if (item.id == this.floorOnId) {
+        this.updateRootData(this.imgSrc[idx], data);
+      }
+    });
+  };
+
   @action
   floorActive = (id, index) => {
-    if (!this.floorOnId && id != this.floorOnId) {
-      console.log("Active Floor:"+ id + "- Index:"+ index);     
+    if (!(this.floorOnId && id === this.floorOnId)) {
+      console.log("Active Floor:" + id + "- Index:" + index);
       this.setFloorOnId(id);
-      // var tArr = [...observable(this.imgSrc).slice()];
-      // console.log(tArr);
-      // tArr[index].isActive = !this.abc;
-      // this.imgSrc = tArr;
-      //this.updateObjData(this.imgSrc, tArr);
-      // var tArr = [...this.imgSrc];
-      // this.updateObjData(tArr[index], {
-      //   isActive: true
-      // });
-      // this.imgSrc = tArr;
+
+      this.setListItem(this.imgSrc, {
+        isActive: true
+      });
+    } else if (id === this.floorOnId) {
+      this.setListItem(this.imgSrc, {
+        isActive: !this.getFloorItem(id).isActive
+      });
+      this.setFloorOnId("");
     }
-
-
-    // .map((item) => {
-    //   if (item.id == this.floorOnId) {
-    //     this.updateObjData(item, {
-    //       isActive: true
-    //     });        
-    //   } else {
-    //     this.updateObjData(item, {
-    //       isActive: false
-    //     });
-    //   }
-    // });
-  }
+  };
 
   @action
-  setDragId = (id) => {
-    this.updateObjData(this, {
+  delFloorItem = id => {
+    this.delListItem(this.imgSrc, id);
+  };
+
+  @action
+  getDragItem = id => {
+    this.getSubListItem("imgSrc", "clkArr", id);
+  };
+
+  @action
+  setDragId = id => {
+    this.updateRootData(this, {
       dragOnId: id
     });
-  }
+  };
 
   @action
-  dragActive = (id) => {
-    this.imgSrc.map((item) => {
+  setDragData = data => {
+    this.addSubListItem("imgSrc", "clkArr", data);
+  };
+
+  @action
+  dragActive = id => {
+    if (!(this.dragOnId && id === this.dragOnId)) {
       this.setDragId(id);
-      if (item.id == this.floorOnId) {
-        var clkArr = item.clkArr;
-        clkArr.map((it, idx) => {
-          if (it.id == this.dragOnId) {
-            this.updateObjData(it, {
-              isActive: true
-            });
-          } else {
-            this.updateObjData(it, {
-              isActive: false
-            });
-          }
-        });
-      }
-    });
-  }
-
-  @action
-  updateDragCfg = (data) => {     
-    var tt = this.imgSrc.map((item) => {
-      if (item.id == this.floorOnId) {
-        var clkArr = item.clkArr;
-        if (clkArr) {
-          clkArr.map((it, idx) => {
-            if (it.id == this.dragOnId) {
-              
-              this.updateObjData(it, data);
-            }
-          });
-        }
-      }
-    });
-    console.log(this.imgSrc);
-    console.log(tt);
-  }
+      // this.imgSrc.forEach((item) => {
+      //   if (item.id == this.floorOnId) {
+      //     var clkArr = item.clkArr;
+      //     clkArr.forEach((it, idx) => {
+      //       if (it.id == this.dragOnId) {
+      //         this.updateRootData(it, {
+      //           isActive: true
+      //         });
+      //       } else {
+      //         this.updateRootData(it, {
+      //           isActive: false
+      //         });
+      //       }
+      //     });
+      //   }
+      // });
+    }
+  };
 
   @action
   delActiveDragBox = () => {
-    this.imgSrc.map((item) => {
-      console.log(item);
-      if (item.id == this.floorOnId) {
-        var clkArr = item.clkArr;
-        if (clkArr) {
-          clkArr.map((it, idx) => {
-            if (it.id == this.dragOnId) {
-              this.delArrDataByIndex(clkArr, it);
-            }
-          });
+    this.delSubListItem("imgSrc", "clkArr");
+  };
+
+  /**
+   * 提交构建数据接口
+   * @param {*提交数据} data
+   */
+  DoneIt(data) {
+    if (!data) {
+      return;
+    }
+    return this.rootStore.sendPost(ApiUrls.DONE, data).then(
+      result => {
+        if (!result.data) return;
+        console.log("Success");
+        console.log(result);
+        if (result.result == 0 && result.data) {
+          result.data.downloadUrl &&
+            this.updateRootData({
+              downloadUrl: result.data.downloadUrl
+            });
+          result.data.previewUrl &&
+            this.updateRootData({
+              previewUrl: result.data.previewUrl
+            });
         }
+      },
+      function(err, msg) {
+        console.log(err);
+        console.log(msg);
       }
-    });
+    );
   }
 
-
-
+  upload2Remote(data) {
+    if (!data) {
+      return;
+    }
+    return this.rootStore.sendPost(ApiUrls.UPLOADIMG, data).then(
+      result => {
+        if (!result.data) return;
+        console.log("Success");
+        console.log(result);
+        if (result.result == 0 && result.data) {
+        }
+      },
+      function(err, msg) {
+        console.log(err);
+        console.log(msg);
+      }
+    );
+  }
 
   // test
-  @observable count = this.persistData.get('count', this);
+  @observable count = this.persistData.get("count", this);
 
   @action
   setCount(count) {
@@ -229,36 +329,9 @@ class UIStore {
     tCount--;
     this.setCount(tCount);
   }
-  @computed get
-  square() {
+  @computed
+  get square() {
     return this.count * this.count;
-  }
-
-  /**
-   * 提交构建数据接口
-   * @param {*提交数据} data
-   */
-  DoneIt(data) {
-    if (!data) {
-      return;
-    }
-    return this.rootStore.sendPost(ApiUrls.DONE, data).then(
-      result => {
-        if (!result.data) return;
-        console.log('Success');
-        if (this.isMounted()) {
-          console.log(result);
-          if (result.result == 0 && result.data) {
-            result.data.downloadUrl && this.updateObjData({ downloadUrl: result.data.downloadUrl });
-            result.data.previewUrl && this.updateObjData({ previewUrl: result.data.previewUrl });
-          }
-        }
-      },
-      function (err, msg) {
-        console.log(err);
-        console.log(msg);
-      }
-    );
   }
 }
 export default UIStore;

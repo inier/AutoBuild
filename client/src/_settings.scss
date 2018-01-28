@@ -1,12 +1,13 @@
 //基础变量
-$std-white: rgb(255,255,255);
-$std-gray: rgb(196,196,196);
-$std-black: rgb(20,20,20);
+$std-white: rgb(255, 255, 255);
+$std-gray: rgb(196, 196, 196);
+$std-black: rgb(20, 20, 20);
 $std-blue: #1890ff;
 //应用全局设置
 $global-color-bg: $std-gray;
 $global-primary: $std-blue;
-$global-W: 1080px; 
+$global-W: 1080px;
 $header-H: 50px;
 $footer-H: 50px;
 $global-color-shadow: darken($std-gray, 20%);
+$active-color-bg:rgba(255, 86, 86, 0.5);

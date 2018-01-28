@@ -1,34 +1,33 @@
-.right-up-btn{
-    position:absolute;
-    right:-5px;
-    top:-5px;
-    background:#fff;
-    width:20px;
-    height:20px;
+.right-up-btn {
+    position: absolute;
+    right: -5px;
+    top: -5px;
+    padding: 18px;
+    border: 2px;
+    background: #fff;
     border-radius: 50%;
-    font-size:14px;
-    color:#000;
+    color: #000;
     text-align: center;
-    transform:rotate(45deg);
+    transform: rotate(45deg);
     cursor: pointer;
-    &:before{
-        content:'';
+    &:before {
+        content: '';
         position: absolute;
-        width:80%;
-        height:1px;
-        background:#000;
-        left:50%;
-        top:50%;
-        transform: translate(-50%,-50%);
+        width: 70%;
+        height: 1px;
+        background: #000;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
     }
-    &:after{
-        content:'';
+    &:after {
+        content: '';
         position: absolute;
-        height:80%;
-        width:1px;
-        background:#000;
-        left:50%;
-        top:50%;
-        transform: translate(-50%,-50%);
+        height: 70%;
+        width: 1px;
+        background: #000;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
     }
 }

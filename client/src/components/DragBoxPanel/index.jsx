@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import "./index.css";
+import "./index.scss";
 // 引入 删除 图标
 import DelBtn from "../DelBtn";
 
@@ -62,7 +62,6 @@ class RightNav extends Component {
     // )
     return (
       <div className="content-right-nav">
-
         <div className="title">{this.props.title}</div>
         {/* 清空 input valu 组建 */}
         <input

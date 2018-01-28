@@ -1,26 +1,26 @@
-const express = require('express');
-const path = require('path');
+const express = require("express");
+const path = require("path");
 const app = express();
 /**
- * ÔÚÕýÊ½·þÎñÆ÷ÉÏÓÃÀ´×ö´úÀíµÄ
+ * ï¿½ï¿½ï¿½ï¿½Ê½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
  */
-const proxy = require('http-proxy-middleware');
+const proxy = require("http-proxy-middleware");
 
-//context¿ÉÒÔÊÇµ¥¸ö×Ö·û´®£¬Ò²¿ÉÒÔÊÇ¶à¸ö×Ö·û´®Êý×é
-const context = ['/api'];
-//ÅäÖÃÒª´úÀíµ½µÄ½Ó¿ÚµØÖ·£¬ÓòÃûºÍip¶¼¿ÉÒÔ
+//contextï¿½ï¿½ï¿½ï¿½ï¿½Çµï¿½ï¿½ï¿½ï¿½Ö·ï¿½ï¿½ï¿½ï¿½ï¿½Ò²ï¿½ï¿½ï¿½ï¿½ï¿½Ç¶ï¿½ï¿½ï¿½Ö·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+const context = ["/api"];
+//ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½ï¿½Ä½Ó¿Úµï¿½Ö·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ipï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 const options = {
-    target: 'http://127.0.0.1:8081',
-    changeOrigin: true
-}
-//½«options¶ÔÏóÓÃproxy·â×°ÆðÀ´£¬×÷Îª²ÎÊý´«µÝ
+  target: "http://127.0.0.1:8080",
+  changeOrigin: true
+};
+//ï¿½ï¿½optionsï¿½ï¿½ï¿½ï¿½ï¿½ï¿½proxyï¿½ï¿½×°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 const apiProxy = proxy(options);
-app.use(context, apiProxy)
+app.use(context, apiProxy);
 
-app.use(express.static(path.join(__dirname, 'build')));
+app.use(express.static(path.join(__dirname, "build")));
 
-app.get('/', function (req, res) {
-  res.sendFile(path.join(__dirname, 'build', 'index.html'));
+app.get("/", function(req, res) {
+  res.sendFile(path.join(__dirname, "build", "index.html"));
 });
 
 app.listen(3000);

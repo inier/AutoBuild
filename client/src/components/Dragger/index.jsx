@@ -1,13 +1,10 @@
 import React, { Component } from "react";
 
-import "./index.css";
+import "./index.scss";
 
 import Dragger from "react-dragger-r";
 
-// 右侧 属性添加模块 ===
-import RightNav from "../DragBoxPanel";
-
-//  // 引入 右上角 删除 按钮 组件
+// 引入 右上角 删除 按钮 组件
 import DelBtn from "../DelBtn";
 
 const doc = document;
@@ -15,8 +12,6 @@ const doc = document;
 class Drag extends Component {
   constructor(props) {
     super(props);
-    this.move = this.move.bind(this);
-    this.resizeEnd = this.resizeEnd.bind(this);
     this.state = {
       oringX: 0,
       oringY: 0,
@@ -49,7 +44,42 @@ class Drag extends Component {
       ]
     };
   }
-  move = (e) => {
+
+  handleClick = e => {
+    //e.nativeEvent.stopImmediatePropagation();
+    this.props.handleClick(e.target.id);
+  };
+
+  handleMouseOut = e => {
+    e.stopPropagation();
+    console.log("out");
+    doc.removeEventListener("mousemove", this.move, false);
+    doc.addEventListener("mouseup", this.resizeEnd);
+  };
+  handleMouseUp = e => {
+    e.stopPropagation();
+    const obj = {
+      width: this.state.width,
+      height: this.state.height,
+      id: this.props.id,
+      parentId: this.props.parentId
+    };
+
+    this.props.handleMouseUp(obj);
+  };
+  dragMove = (e, x, y) => {
+    // x,y , 获取 拖拽的   x,y
+    const obj = {
+      left: x,
+      top: y,
+      id: this.props.id,
+      parentId: this.props.parentId
+    };
+
+    this.props.dragMove(obj);
+  };
+  move = e => {
+    e.stopPropagation();
     const startX = e.clientX;
     const startY = e.clientY;
     //console.log(startX,startY);
@@ -65,9 +95,9 @@ class Drag extends Component {
       width: difWidth,
       height: difHeight
     });
+  };
+  resizeStart = e => {
     e.stopPropagation();
-  }
-  resizeStart = (e) => {
     doc.body.style.userSelect = "none";
     const startX = e.clientX;
     const startY = e.clientY;
@@ -79,9 +109,9 @@ class Drag extends Component {
     doc.addEventListener("mousemove", this.move);
     doc.addEventListener("mouseup", this.resizeEnd);
     //doc.addEventListener('mouseout', this.handleMouseOut.bind(this))
+  };
+  resizeEnd = e => {
     e.stopPropagation();
-  }
-  resizeEnd = (e) => {
     doc.body.style.userSelect = "";
 
     const lastW = this.state.width;
@@ -96,41 +126,10 @@ class Drag extends Component {
       lastW,
       lastH
     });
-    e.stopPropagation();
-
     //  回调 给 父组件  的方法
-  }
-  handleMouseOut = (e) => {
-    console.log("out");
-    doc.removeEventListener("mousemove", this.move, false);
-    doc.addEventListener("mouseup", this.resizeEnd.bind(this));
-
-    e.stopPropagation();
-  }
-  handleMouseUp = (e) => {
-    const obj = {
-      width: this.state.width,
-      height: this.state.height,
-      id: this.props.id,
-      parentId: this.props.parentId
-    };
-
-    this.props.handleMouseUp(obj);
-    e.stopPropagation();
-  }
-  dragMove = (ve, x, y) => {
-    // x,y , 获取 拖拽的   x,y
-    const obj = {
-      left: x,
-      top: y,
-      id: this.props.id,
-      parentId: this.props.parentId
-    };
-
-    this.props.dragMove(obj);
-  }
+  };
   // 那个插件 传过来 的数据 ，这这里修改
-  changeValue = (data) => {
+  changeValue = data => {
     const arr = this.state.attrList;
     // 改变 input 框的 对应 数组的id
     const id = data.id;
@@ -162,16 +161,16 @@ class Drag extends Component {
     //sendToParentObj[type] = value;
     // 这里吧参数，传入到 addImg 组建中，给 点击区域的 数据 总揽添加 list 属性
     this.props.changeAttrList(sendToParentObj);
-  }
+  };
   // 删除 组建 点击删除
   // 向父组件 同行，利用this.props
-  doDelete = () => {    
+  doDelete = () => {
     this.props.delDragArea();
 
     // 阻止 事件冒泡==============
-  }
+  };
   // 清空 input 框 value 值
-  clearInputVal = (data) => {
+  clearInputVal = data => {
     console.log("dragger" + data);
     const id = data;
     const temArr = this.state.attrList;
@@ -183,7 +182,7 @@ class Drag extends Component {
     this.setState({
       attrList: temArr
     });
-  }
+  };
   componentWillUnmount() {
     console.log("removed a dragger");
   }
@@ -196,40 +195,23 @@ class Drag extends Component {
     };
     return (
       <Dragger
-        onMove={this.dragMove}
-        bounds="parent"
-        style={styleObj}
         className="clkArea"
+        style={styleObj}
+        bounds="parent"
+        onClick={this.handleClick}
+        onMove={this.dragMove}
       >
-        <div className="content">
+        <div className={this.props.isActive ? "content ac" : "content"}>
           simple drag
           {/* 点击删除 */}
           <DelBtn clickCb={this.doDelete} />
-
           {/* 拖住啊，改变w，h */}
           <i
             className="dragable"
             onMouseDown={this.resizeStart}
             onMouseUp={this.handleMouseUp}
-
-          //onMouseOut={this.handleMouseOut.bind(this)}
+            //onMouseOut={this.handleMouseOut.bind(this)}
           />
-          <div className="right-coperation">
-            {this.state.attrList.length &&
-              this.state.attrList.map((elm, idx) => {
-                return (
-                  <RightNav
-                    key={idx}
-                    title={elm.title}
-                    type={elm.type}
-                    value={elm.value}
-                    id={elm.id}
-                    clearInputVal={this.clearInputVal}
-                    changeValue={this.changeValue}
-                  />
-                );
-              })}
-          </div>
         </div>
       </Dragger>
     );

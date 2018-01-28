@@ -1,14 +1,14 @@
+@import "../../_settings";
 //css modules处理
-:local{
-    .imgCoporation{
-        overflow-y: auto;
-        //min-width: 900px;
-        border: 1px dashed grey;
+:local {
+    .imgCoporation {
+        overflow-y: auto; //min-width: 900px;       
+        border: 1px dashed darken($global-primary, 30%);
         text-align: center;
-        &:empty{
+        &:empty {
             border: none;
         }
-        img {        
+        img {
             width: 100%;
         }
     }

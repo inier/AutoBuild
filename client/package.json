@@ -1,7 +1,7 @@
 {
   "name": "pc-template",
   "version": "0.1.0",
-  "private": true,  
+  "private": true,
   "proxy": "http://localhost:8080",
   "dependencies": {
     "antd": "^3.1.4",
@@ -42,7 +42,6 @@
     "cross-spawn": "^6.0.3",
     "isexe": "^2.0.0",
     "mobx-react-devtools": "^4.2.15",
-    "react-app-rewired": "^1.4.0",
-    "react-dragger-r": "^0.0.12"
+    "react-app-rewired": "^1.4.0"
   }
 }

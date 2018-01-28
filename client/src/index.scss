@@ -1,5 +1,4 @@
 @import "./_settings";
-
 html,
 body {
     height: 100%;
@@ -8,7 +7,7 @@ body {
 body {
     padding: 0;
     margin: 0;
-    min-width: $global-W; 
+    min-width: $global-W;
     background-color: $global-color-bg;
     overflow-y: hidden;
 }
@@ -22,4 +21,5 @@ ol {
 
 #root {
     height: 100%;
+    min-height: 580px;
 }

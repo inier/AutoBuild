@@ -11,16 +11,16 @@ class DelBtn extends Component {
   constructor(props) {
     super(props);
   }
-  handleClick = (e) => {
+  handleClick = e => {
     const data = this.props.needData;
     typeof this.props.clickCb === "function" && this.props.clickCb(data);
-  }
+  };
   render() {
     return (
       <i
+        className="right-up-btn"
         style={this.props.styleObj}
         onClick={this.handleClick}
-        className="right-up-btn"
       />
     );
   }

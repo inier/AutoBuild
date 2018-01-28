@@ -1,13 +1,18 @@
+@import "../../_settings";
 //css modules处理
 :local {}
 
 .img_wrap {
     margin-top: 10px;
+    margin-left: auto;
+    margin-right: auto;
     cursor: pointer;
     &:first-child {
         margin-top: 0;
     }
     .img_box {
+        -webkit-box-sizing: content-box;
+        box-sizing: content-box;
         position: relative;
         width: 900px;
         border: 5px solid orange;
@@ -25,9 +30,7 @@
                 position: absolute;
                 right: 0;
                 top: 0;
-                font-size: 12px;
-                height: 15px;
-                width: 15px;
+                padding: 10px;
                 border-radius: 50%;
                 background-color: orange;
                 color: #fff;

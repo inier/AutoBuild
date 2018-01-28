@@ -5,11 +5,7 @@ import { Layout } from "antd";
 import OptPanel from "../OptPanel";
 
 class MainPanel extends Component {
-  constructor() {
-    super();
-  }
-
-  render(props) {
+  render() {
     return (
       <Layout>
         <OptPanel />
