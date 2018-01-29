@@ -12,8 +12,9 @@ class DelBtn extends Component {
     super(props);
   }
   handleClick = e => {
-    const data = this.props.needData;
-    typeof this.props.clickCb === "function" && this.props.clickCb(data);
+    e.nativeEvent.stopImmediatePropagation();
+    e.stopPropagation();    
+    typeof this.props.clickCb === "function" && this.props.clickCb(this.props.id);
   };
   render() {
     return (

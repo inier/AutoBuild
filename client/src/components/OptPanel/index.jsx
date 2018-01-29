@@ -17,7 +17,7 @@ class OptPanel extends Component {
     this.props.UIStore.floorActive(id, index);
   };
 
-  render() {
+  render() {   
     var floors = this.props.UIStore.imgSrc.map((elm, idx) => {
       var tProps = {
         id: elm.id,

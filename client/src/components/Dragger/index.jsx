@@ -46,8 +46,9 @@ class Drag extends Component {
   }
 
   handleClick = e => {
-    //e.nativeEvent.stopImmediatePropagation();
-    this.props.handleClick(e.target.id);
+    e.nativeEvent.stopImmediatePropagation();
+    e.stopPropagation();
+    this.props.handleClick(e.currentTarget.id, e.currentTarget.getAttribute('data-parentid'));
   };
 
   handleMouseOut = e => {
@@ -68,6 +69,7 @@ class Drag extends Component {
     this.props.handleMouseUp(obj);
   };
   dragMove = (e, x, y) => {
+    this.props.handleClick(e.currentTarget.id);
     // x,y , 获取 拖拽的   x,y
     const obj = {
       left: x,
@@ -164,8 +166,13 @@ class Drag extends Component {
   };
   // 删除 组建 点击删除
   // 向父组件 同行，利用this.props
-  doDelete = () => {
-    this.props.delDragArea();
+  doDelete = (e) => {
+    console.log("删除拖拽框");
+    const delData = {
+      id: this.props.id,
+      parentId: this.props.parentId
+    };
+    this.props.delDragArea(delData);
 
     // 阻止 事件冒泡==============
   };
@@ -194,26 +201,27 @@ class Drag extends Component {
       height: `${this.state.height}px`
     };
     return (
-      <Dragger
-        className="clkArea"
-        style={styleObj}
-        bounds="parent"
-        onClick={this.handleClick}
-        onMove={this.dragMove}
-      >
-        <div className={this.props.isActive ? "content ac" : "content"}>
-          simple drag
+      <div onClick={this.handleClick} id={this.props.id} data-parentid={this.props.parentId}>
+        <Dragger
+          className="clkArea"
+          style={styleObj}
+          bounds="parent"
+          onMove={this.dragMove}
+        >
+          <div className={this.props.isActive ? "content ac" : "content"}>
+            simple drag
           {/* 点击删除 */}
-          <DelBtn clickCb={this.doDelete} />
-          {/* 拖住啊，改变w，h */}
-          <i
-            className="dragable"
-            onMouseDown={this.resizeStart}
-            onMouseUp={this.handleMouseUp}
+            <DelBtn clickCb={this.doDelete} />
+            {/* 拖住啊，改变w，h */}
+            <i
+              className="dragable"
+              onMouseDown={this.resizeStart}
+              onMouseUp={this.handleMouseUp}
             //onMouseOut={this.handleMouseOut.bind(this)}
-          />
-        </div>
-      </Dragger>
+            />
+          </div>
+        </Dragger>
+      </div>
     );
   }
 }

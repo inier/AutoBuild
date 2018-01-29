@@ -38,7 +38,7 @@ class FileUpload extends Component {
     if (typeof FileReader === "undefined") {
       alert("抱歉，你的浏览器不支持 FileReader");
       e.target.setAttribute("disabled", "disabled");
-    } else {
+    } else {      
       if (!e.target["value"].match(/.jpg|.gif|.png|.bmp/i)) {
         //判断上传文件格式
         alert("上传的图片格式不正确，请重新选择");
@@ -112,6 +112,8 @@ class FileUpload extends Component {
       }
       this.store.upload2Remote(fd);
     } */
+
+    e.target.value = "";
   };
 
   render() {

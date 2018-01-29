@@ -31,108 +31,169 @@ class UIStore {
   @observable imgList = [];
   @observable choosed = {};
 
-  //更新对象
+  // 更新对象
   updateRootData = (srcObj, data) => {
-    Object.assign(srcObj, data);
+    if (typeof srcObj !== "object" || Array.isArray(srcObj)) {
+      srcObj = data;
+    } else {
+      Object.assign(srcObj, data);
+    }
   };
 
-  //ListItem 读取
-  getListItem = (list, id) => {
-    return list[this.getListItemIndex(list, id)];
-  };
-  getListItemIndex = (list, id) => {
-    var result;
-    list.forEach((it, index) => {
-      if (it.id === id) {
-        result = index;
-      }
-    });
-    return result;
-  };
-  //List更新
-  setListItem = (list, data) => {
-    list.slice().forEach((item, index) => {
-      if (item.id === this.floorOnId) {
-        for (var prop in data) {
-          if (data.hasOwnProperty(prop)) {
-            list[index][prop] = data[prop];
-          }
-        }
-      }
-    });
-  };
-  //List追加
-  addListItem = (list, item) => {
+  // push数据
+  pushListData = (list, item) => {
     list.push(item);
   };
-  //删除List中的指定项
-  delListItem = (list, id) => {
-    // list = list.slice().filter(it => {
-    //   return it.id != id;
-    //   //srcArr.splice(index, 1); //有bug
-    // });
-    list.splice(this.getListItemIndex(list, id), 1);
-  };
 
-  getSubListItem = (pListName, cListName, item) => {
-    const tResult = this[pListName].slice().filter((item, pIndex) => {
-      return item.id === this.floorOnId;
-    });
-
-    return tResult[cListName].filter((it, cIndex) => {
-      return it.id === this.dragOnId;
-    });
-  };
-  //List的子级数据追加
-  // genes: 为父->子的多级基因链,如  [pArr,cArr]
-  // item: {k:v}
-  addSubListItem = (pListName, cListName, data) => {
-    var pList = this[pListName];
+  // subList相关
+  getIndexById = (id, isPARENT) => {
+    var pList = [].concat(this.imgSrc.slice());
+    var result = "";
     pList.forEach((item, pIndex) => {
-      if (item.id === this.floorOnId) {
-        var cList = item[cListName];
-        if (cList) {
-          this.addListItem(pList[pIndex][cListName], data);
-        } else {
-          pList[pIndex][cListName] = [];
-          this.addListItem(pList[pIndex][cListName], data);
+      if (isPARENT) {
+        if (item.id === id) {
+          result = pIndex;
         }
-      }
-    });
-  };
-  setSubListItem = (pListName, cListName, data) => {
-    var pList = this[pListName].slice();
-    pList.forEach((item, pIndex) => {
-      if (item.id === this.floorOnId) {
-        var cList = item[cListName];
+      } else {
+        var cList = item.clkArr;
         if (cList) {
           cList.forEach((it, cIndex) => {
-            if (it.id === this.dragOnId) {
-              for (var prop in data) {
-                if (data.hasOwnProperty(prop)) {
-                  pList[pIndex][cListName][cIndex][prop] = data[prop];
-                }
-              }
+            if (it.id === id) {
+              result = cIndex;
             }
           });
         }
       }
     });
+    return result;
   };
-  delSubListItem = (pListName, cListName) => {
-    var pList = this[pListName].slice();
-    pList.forEach((item, pIndex) => {
-      if (item.id === this.floorOnId) {
-        var cList = item[cListName];
-        if (cList) {
-          cList.forEach((it, cIndex) => {
-            pList[pIndex][cListName] = cList.filter(it => {
-              return it.id !== this.dragOnId;
-            });
-          });
+
+  //ListItem相关
+  getListItemIndex = (id) => {
+    return this.getIndexById(id, true);
+  };
+
+  // List获取 
+  getListItem = (id) => {
+    return this.imgSrc[this.getListItemIndex(id)];
+  };
+
+  // List更新
+  setListItem = (data) => {
+    if (!this.floorOnId) {
+      return;
+    };
+    var pList = [].concat(this.imgSrc.slice());
+    var pIndex = this.getListItemIndex(this.floorOnId);
+    for (var prop in data) {
+      if (data.hasOwnProperty(prop)) {
+        pList[pIndex][prop] = data[prop];
+      }
+    }
+
+    this.updateRootData(this.imgSrc, pList);
+  };
+
+  //删除List中的指定项
+  delListItem = (id) => {
+    // list = list.slice().filter(it => {
+    //   return it.id != id;
+    //   //srcArr.splice(index, 1); //有bug
+    // });
+    this.imgSrc.splice(this.getListItemIndex(id), 1);
+  };
+
+  // subList相关
+  getSubListItemIndex = (id) => {
+    return this.getIndexById(id);
+  };
+  /**
+    * 获取clkArr中的列表项
+    */
+  getSubListItem = (id = this.dragOnId, parentId = this.floorOnId) => {
+    if (!parentId) {
+      return;
+    };
+
+    const tResult = this.imgSrc.slice().filter((item, pIndex) => {
+      return item.id === parentId;
+    });
+    console.log(tResult);
+    if (tResult[0].clkArr === undefined) {
+      return {};
+    }
+    return tResult[0].clkArr.filter((it, cIndex) => {
+      return it.id === id;
+    })[0];
+  };
+
+  setSubListItem = (data, id = this.dragOnId, parentId = this.floorOnId) => {
+    if (!parentId) {
+      return;
+    };
+
+    var pList = [].concat(this.imgSrc.slice());
+    var pIndex = this.getListItemIndex(parentId);
+    var cIndex = this.getSubListItemIndex(id);
+
+    if (pList[pIndex]["clkArr"]) {
+      for (var prop in data) {
+        if (data.hasOwnProperty(prop)) {
+          pList[pIndex]["clkArr"][cIndex][prop] = data[prop];
         }
       }
-    });
+    }
+    this.updateRootData(this.imgSrc, pList);
+
+
+    // var pList = [].concat(this.imgSrc.slice());    
+    // pList.forEach((item, pIndex) => {
+    //   if (item.id === parentId) {
+    //     var cList = item["clkArr"];
+    //     if (cList) {
+    //       cList.forEach((it, cIndex) => {
+    //         if (it.id === id) {              
+    //           for (var prop in data) {
+    //             if (data.hasOwnProperty(prop)) {
+    //               pList[pIndex]["clkArr"][cIndex][prop] = data[prop];
+    //             }
+    //           }
+    //         }
+    //       });         
+    //     }
+    //   }
+    // });
+    // this.imgSrc = pList;
+  };
+  //List的子级数据追加
+  // genes: 为父->子的多级基因链,如  [pArr,cArr]
+  // item: {k:v}
+  addSubListItem = (data) => {
+    if (!this.floorOnId) {
+      return;
+    };
+    var pList = [].concat(this.imgSrc.slice());
+    var pIndex = this.getListItemIndex(this.floorOnId);
+
+    if (typeof pList[pIndex].clkArr === "undefined") {
+      pList[pIndex].clkArr = [];
+    }
+    this.pushListData(pList[pIndex].clkArr, data);
+  };
+
+  delSubListItem = (id = this.dragOnId, parentId = this.floorOnId) => {
+    if (!parentId) {
+      return;
+    };
+    var pList = [].concat(this.imgSrc.slice());
+    var pIndex = this.getListItemIndex(parentId);
+    var cList = pList[pIndex].clkArr;
+    if (cList) {
+      pList[pIndex].clkArr = cList.filter(it => {
+        return it.id !== id;
+      });
+    }
+    this.updateRootData(this.imgSrc, pList);
   };
 
   // 选择 网页 类型 pc，app
@@ -170,29 +231,23 @@ class UIStore {
   // 楼层数组 imgSrc 追加数据
   @action
   floorDataPush = obj => {
-    this.addListItem(this.imgSrc, obj);
+    this.pushListData(this.imgSrc, obj);
   };
 
   // 根据楼层id获得对应楼层的配置数据
   @action
   getFloorItem = id => {
-    return this.getListItem(this.imgSrc, id);
+    return this.getListItem(id);
   };
 
   @action
   setFloorOnId = id => {
-    this.updateRootData(this, {
-      floorOnId: id
-    });
+    this.floorOnId = id;
   };
 
   @action
   setFloorData = data => {
-    this.imgSrc.forEach((item, idx) => {
-      if (item.id == this.floorOnId) {
-        this.updateRootData(this.imgSrc[idx], data);
-      }
-    });
+    this.setListItem(data);
   };
 
   @action
@@ -200,26 +255,25 @@ class UIStore {
     if (!(this.floorOnId && id === this.floorOnId)) {
       console.log("Active Floor:" + id + "- Index:" + index);
       this.setFloorOnId(id);
-
-      this.setListItem(this.imgSrc, {
-        isActive: true
-      });
+      // this.setListItem({
+      //   isActive: true
+      // });
     } else if (id === this.floorOnId) {
-      this.setListItem(this.imgSrc, {
-        isActive: !this.getFloorItem(id).isActive
-      });
-      this.setFloorOnId("");
+      //this.setFloorOnId("");
+      // this.setListItem({
+      //   isActive: !this.getFloorItem(id).isActive
+      // });
     }
   };
 
   @action
   delFloorItem = id => {
-    this.delListItem(this.imgSrc, id);
+    this.delListItem(id);
   };
 
   @action
-  getDragItem = id => {
-    this.getSubListItem("imgSrc", "clkArr", id);
+  getDragItem = (id) => {
+    return this.getSubListItem(id);
   };
 
   @action
@@ -230,36 +284,37 @@ class UIStore {
   };
 
   @action
-  setDragData = data => {
-    this.addSubListItem("imgSrc", "clkArr", data);
+  addDragData = data => {
+    this.addSubListItem(data);
   };
 
   @action
-  dragActive = id => {
+  setDragData = (data, id, parentId) => {
+    this.setSubListItem(data, id, parentId);
+  };
+
+  @action
+  dragActive = (id, parentId) => {
+    if (this.floorOnId !== parentId) {
+      this.floorActive(parentId);
+    }
     if (!(this.dragOnId && id === this.dragOnId)) {
       this.setDragId(id);
-      // this.imgSrc.forEach((item) => {
-      //   if (item.id == this.floorOnId) {
-      //     var clkArr = item.clkArr;
-      //     clkArr.forEach((it, idx) => {
-      //       if (it.id == this.dragOnId) {
-      //         this.updateRootData(it, {
-      //           isActive: true
-      //         });
-      //       } else {
-      //         this.updateRootData(it, {
-      //           isActive: false
-      //         });
-      //       }
-      //     });
-      //   }
-      // });
+      // this.setSubListItem({
+      //   isActive: !this.getDragItem(id).isActive
+      // }, id, parentId);
+    }
+    else if (id === this.dragOnId) {
+      //this.setDragId("");
+      // this.setSubListItem({
+      //   isActive: !this.getDragItem(id).isActive
+      // }, id, parentId);
     }
   };
 
   @action
-  delActiveDragBox = () => {
-    this.delSubListItem("imgSrc", "clkArr");
+  delActiveDragBox = (id) => {
+    this.delSubListItem(id);
   };
 
   /**
@@ -276,17 +331,11 @@ class UIStore {
         console.log("Success");
         console.log(result);
         if (result.result == 0 && result.data) {
-          result.data.downloadUrl &&
-            this.updateRootData({
-              downloadUrl: result.data.downloadUrl
-            });
-          result.data.previewUrl &&
-            this.updateRootData({
-              previewUrl: result.data.previewUrl
-            });
+          result.data.downloadUrl && (this.downloadUrl = result.data.downloadUrl);
+          result.data.previewUrl && (this.previewUrl = result.data.previewUrl);
         }
       },
-      function(err, msg) {
+      function (err, msg) {
         console.log(err);
         console.log(msg);
       }
@@ -305,7 +354,7 @@ class UIStore {
         if (result.result == 0 && result.data) {
         }
       },
-      function(err, msg) {
+      function (err, msg) {
         console.log(err);
         console.log(msg);
       }

@@ -14,14 +14,14 @@ import Drag from "../Dragger";
 @observer
 class FloorPanel extends Component {
   handleClick = e => {
-    //e.nativeEvent.stopImmediatePropagation();
+    e.nativeEvent.stopImmediatePropagation();
+    e.stopPropagation();
     this.props.handleClick(e.target.id, this.props.index);
   };
 
-  dragHandleClick = id => {
-    console.log("dragHandleClick");
-    //e.nativeEvent.stopImmediatePropagation();
-    this.props.UIStore.dragActive(id);
+  dragHandleClick = (id,parentId) => {
+    console.log("dragHandleClick");    
+    this.props.UIStore.dragActive(id,parentId);
   };
   // 图片onload 事件
   imgOnload = e => {
@@ -115,7 +115,7 @@ class FloorPanel extends Component {
   // 删除 点击区域
   delDragArea = data => {
     // 改变数据
-    this.props.UIStore.delActiveDragBox();
+    this.props.UIStore.delActiveDragBox(data);
   };
 
   // 删除图片=====================================
@@ -150,7 +150,7 @@ class FloorPanel extends Component {
             onLoad={this.imgOnload}
           />
           {/* 删除图片 ===按钮 */}
-          <DelBtn needData={this.props.id} clickCb={this.delImg} />
+          <DelBtn id={this.props.id} clickCb={this.delImg} />
           {this.props.clkArr &&
             this.props.clkArr.map((elm, index) => {
               return (

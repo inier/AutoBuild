@@ -3,7 +3,7 @@
 :local {
     .imgCoporation {
         overflow-y: auto; //min-width: 900px;       
-        border: 1px dashed darken($global-primary, 30%);
+        border: 1px dashed darken($global-primary, 30%);        
         text-align: center;
         &:empty {
             border: none;

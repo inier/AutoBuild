@@ -84,6 +84,15 @@
         "isInputTitle": false
     },
     {
+        "text": "领取代金卷首页",
+        "value": "60",
+        "isInputUrl": true,
+        "inputUrlTip": "请输入代金卷批次ID",
+        "isInputTitle": false,
+        "targetPage":{},
+        "isSetTargetPage":false
+    },
+    {
         "text": "iFrame嵌入，带header",
         "value": "50",
         "isInputUrl": true,
