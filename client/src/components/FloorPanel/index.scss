@@ -2,6 +2,14 @@
 //css modules处理
 :local {}
 
+::selection {
+    color: transparent
+}
+
+::-moz-selection {
+    color: transparent
+}
+
 .img_wrap {
     margin-top: 10px;
     margin-left: auto;
@@ -14,8 +22,17 @@
         -webkit-box-sizing: content-box;
         box-sizing: content-box;
         position: relative;
-        width: 900px;
+        width: $content-W;
         border: 5px solid orange;
+        -webkit-user-select: none;
+        /* Chrome all / Safari all */
+        -moz-user-select: none;
+        /* Firefox all */
+        -ms-user-select: none;
+        /* IE 10+ */
+        /* No support for these yet, use at own risk */
+        -o-user-select: none;
+        user-select: none;        
         &.ac {
             border-color: red;
         }

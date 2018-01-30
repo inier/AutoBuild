@@ -4,6 +4,7 @@ import ResponseCode from '../transport-layer/ResponseCode';
 
 import UserStore from './UserStore';
 import UIStore from './UIStore';
+import TestStore from './TestStore';
 import { action } from 'mobx';
 
 class RootStore {
@@ -12,6 +13,7 @@ class RootStore {
     const persistData = new PersistData();
     this.userStore = new UserStore(this, persistData);
     this.UIStore = new UIStore(this, persistData);
+    this.TestStore = new TestStore(this, persistData);
   }
   /**
    * 发送POST请求

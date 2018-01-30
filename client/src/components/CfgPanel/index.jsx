@@ -97,6 +97,9 @@ class CfgPanel extends Component {
       dataType:dataType
     });
     this.store.setDragData({typeData:JSON.parse(val)});
+    const dragId = this.store.dragOnId;
+    this.store.setDragId('');
+    this.store.setDragId(dragId);
   };
   // 输入框 change
   handleInputCg = e => {
@@ -112,6 +115,9 @@ class CfgPanel extends Component {
     this.store.setDragData({
       [tType]: e.target.value
     });
+    const dragId = this.store.dragOnId;
+    this.store.setDragId('');
+    this.store.setDragId(dragId);
   };
   // 开关========
   handleSwitch (val){
@@ -123,7 +129,7 @@ class CfgPanel extends Component {
   // 设置 领取代金券 后 跳转页面 type
   handleSelectCgForBrath = (val) => {
     // 组装 数据
-    const sourceData = this.store.getDragItem(this.props.id);
+    const sourceData = this.store.getDragItem(this.props.UIStore.dragOnId);
     const temObj = sourceData.afterGetBratchData || {};
     temObj.typeData = JSON.parse(val);
     const dataType = temObj.typeData.value;
@@ -131,39 +137,45 @@ class CfgPanel extends Component {
       dataType:dataType
     });
     this.store.setDragData({afterGetBratchData:temObj});
+    const dragId = this.store.dragOnId;
+    this.store.setDragId('');
+    this.store.setDragId(dragId);
   }
   // 处理 领取代金券 后 跳转页面 input
   handleInputCgForBrath = (e) => {
     const tType = e.target.getAttribute("data-type");
-    const sourceData = this.store.getDragItem(this.props.id);
+    const sourceData = this.store.getDragItem(this.props.UIStore.dragOnId);
     const temObj = sourceData.afterGetBratchData || {};
     temObj[tType] = e.target.value;
     this.store.setDragData({
       afterGetBratchData: temObj
     });
+    const dragId = this.store.dragOnId;
+    this.store.setDragId('');
+    this.store.setDragId(dragId);
   }
   render() {
     let options = this.getOptionDom();
     //为了 mobx 能监听 imgSrc 的变化 触发 render ，强行 引用值
     const test = this.props.UIStore.imgSrc;
     // 根据 点击区域id 获取 dataType 属性等。。。
-    const sourceData = this.store.getDragItem(this.props.id);
+    const sourceData = this.store.getDragItem(this.props.UIStore.dragOnId);
     //  读取 配置项 的 值
-    const typeData = sourceData.typeData || '选择跳转页面类型';
+    const typeData = sourceData && sourceData.typeData || '选择跳转页面类型';
     const selecValue = Object.prototype.toString.call(typeData) === '[object Object]' && JSON.stringify(typeData) || typeData;
     // 是不是 代金券 页面 
     const isBatchId = typeData.targetPage || '';
     // 是不是设置 领取代金券的后的 目标页面 datatype datatitl 
-    const isSetTargetPage = sourceData.isSetTargetPage || '';
+    const isSetTargetPage = sourceData && sourceData.isSetTargetPage || '';
     // 领取代金券后 跳转页面的配置参数
-    const afterGetBratchData = sourceData.afterGetBratchData || '';
+    const afterGetBratchData = sourceData && sourceData.afterGetBratchData || '';
     // 领取代金券后 跳转页面的 typeData
-    const bratch_select = afterGetBratchData.typeData || '选择领取代金券后跳转页面类型';
+    const bratch_select = afterGetBratchData && afterGetBratchData.typeData || '选择领取代金券后跳转页面类型';
     const bratch_selectVal = Object.prototype.toString.call(bratch_select) === '[object Object]' && JSON.stringify(bratch_select) || bratch_select;
     //
     // this.store // 
     return (
-      <div className="cfgPanel" id={this.props.id}>
+      <div className="cfgPanel" id={this.props.UIStore.dragOnId}>
         <Form>
           {/* data-type 选择 */}
           <FormItem {...formItemLayout} label="*跳转类型：">
@@ -184,6 +196,21 @@ class CfgPanel extends Component {
               {options}
             </Select>
           </FormItem>
+
+          {/* data-title */}
+          {typeData.isInputTitle && (
+            <FormItem {...formItemLayout} label="跳转标题：">
+              <TextArea
+                data-type="dataTitle"
+                placeholder="请输入跳转页面的标题"
+                onChange={this.handleInputCg}
+                value={sourceData.dataTitle}
+                defaultValue={sourceData.dataTitle}
+                autosize={{ minRows: 1, maxRows: 3 }}
+              />
+            </FormItem>
+          )}
+
           {/* data-url */
           typeData.isInputUrl && (
             <FormItem {...formItemLayout} label="*跳转地址：">
@@ -198,19 +225,7 @@ class CfgPanel extends Component {
             </FormItem>
           )}
 
-          {/* data-title */}
-          {typeData.isInputTitle && (
-            <FormItem {...formItemLayout} label="提示信息：">
-              <TextArea
-                data-type="dataTitle"
-                placeholder="请输入模块的预留提示信息"
-                onChange={this.handleInputCg}
-                value={sourceData.dataTitle}
-                defaultValue={sourceData.dataTitle}
-                autosize={{ minRows: 4, maxRows: 6 }}
-              />
-            </FormItem>
-          )}
+          
           {/* 设置领取代金券 后 跳转地址 */}
           {
             isBatchId && (

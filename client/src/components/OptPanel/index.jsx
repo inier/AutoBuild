@@ -13,11 +13,14 @@ class OptPanel extends Component {
   }
 
   handleClick = (id, index) => {
-    console.log("floorHandleClick");
+    console.log("floorHandleClick");    
     this.props.UIStore.floorActive(id, index);
   };
 
-  render() {   
+  render() {
+    console.log("render-----OptPanel.");
+    console.log("------------------------------------------");
+    //var tFloorId = this.props.UIStore.floorOnId;
     var floors = this.props.UIStore.imgSrc.map((elm, idx) => {
       var tProps = {
         id: elm.id,
@@ -28,6 +31,7 @@ class OptPanel extends Component {
         <FloorPanel
           key={elm.id}
           index={idx}
+          dragOnId={this.props.UIStore.dragOnId}
           isActive={!!(this.props.UIStore.floorOnId === elm.id)}
           handleClick={this.handleClick}
           {...tProps}

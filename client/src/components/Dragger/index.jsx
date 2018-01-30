@@ -1,14 +1,14 @@
 import React, { Component } from "react";
 
 import "./index.scss";
-
+import { inject, observer } from "mobx-react";
 import Dragger from "react-dragger-r";
 
 // 引入 右上角 删除 按钮 组件
 import DelBtn from "../DelBtn";
 
 const doc = document;
-
+@inject("UIStore")
 class Drag extends Component {
   constructor(props) {
     super(props);
@@ -79,6 +79,7 @@ class Drag extends Component {
     };
 
     this.props.dragMove(obj);
+
   };
   move = e => {
     e.stopPropagation();
@@ -97,6 +98,11 @@ class Drag extends Component {
       width: difWidth,
       height: difHeight
     });
+    // const data = {
+    //   left:difWidth,
+    //   top:difHeight
+    // };
+    // this.props.UIStore.setDragData(data);
   };
   resizeStart = e => {
     e.stopPropagation();
@@ -110,6 +116,7 @@ class Drag extends Component {
     });
     doc.addEventListener("mousemove", this.move);
     doc.addEventListener("mouseup", this.resizeEnd);
+
     //doc.addEventListener('mouseout', this.handleMouseOut.bind(this))
   };
   resizeEnd = e => {
@@ -128,6 +135,11 @@ class Drag extends Component {
       lastW,
       lastH
     });
+    // const data = {
+    //   width:lastW,
+    //   height:lastH
+    // };
+    // this.props.UIStore.setDragData(data);
     //  回调 给 父组件  的方法
   };
   // 那个插件 传过来 的数据 ，这这里修改
@@ -200,6 +212,8 @@ class Drag extends Component {
       width: `${this.state.width}px`,
       height: `${this.state.height}px`
     };
+    console.log("render-----Dragger.");
+        
     return (
       <div onClick={this.handleClick} id={this.props.id} data-parentid={this.props.parentId}>
         <Dragger
@@ -208,8 +222,7 @@ class Drag extends Component {
           bounds="parent"
           onMove={this.dragMove}
         >
-          <div className={this.props.isActive ? "content ac" : "content"}>
-            simple drag
+          <div className={this.props.isActive ? "content ac" : "content"}>            
           {/* 点击删除 */}
             <DelBtn clickCb={this.doDelete} />
             {/* 拖住啊，改变w，h */}

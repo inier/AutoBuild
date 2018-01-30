@@ -23,7 +23,7 @@ const UIConfig = {
     content: "专题可视化构建工具"
   },
   footer: {
-    content: "Design ©2018 Created by xxx"
+    content: "Design ©2018 Created by CAEC-FED"
   }
 };
 

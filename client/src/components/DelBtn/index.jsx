@@ -5,6 +5,7 @@
 // 父组件 需要的数据 通过属性绑定过来，在通过 回调函数 传过去
 // 父组建  通过数据，设置，本组建 的 位置 left，top ，right，bottom
 import React, { Component } from "react";
+import { Icon } from "antd";
 import "./index.scss";
 
 class DelBtn extends Component {
@@ -18,11 +19,14 @@ class DelBtn extends Component {
   };
   render() {
     return (
-      <i
-        className="right-up-btn"
-        style={this.props.styleObj}
-        onClick={this.handleClick}
-      />
+      <span className="right-up-btn">
+      <Icon type="close" onClick={this.handleClick} />      
+      </span>
+      // <i
+      //   className="right-up-btn"
+      //   style={this.props.styleObj}
+      //   onClick={this.handleClick}
+      // />
     );
   }
 }

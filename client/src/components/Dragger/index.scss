@@ -1,7 +1,8 @@
 @import "../../_settings";
 .clkArea {
-    background-color: rgba(0, 0, 0, 0.5);
     position: absolute;
+    background-color: $global-color-bg-drag;
+    overflow: hidden;
     .content {
         height: 100%;
         &.ac {
@@ -12,21 +13,28 @@
                 content: "";
                 width: 100%;
                 height: 100%;
-                background-color: $active-color-bg;
+                background-color: $global-active-color-bg;
             }
         }
     }
     .right-up-btn {
-        padding: 10px;
+        padding: 2px;
+        top: 0;
+        right: 0;
+        font-size: 18px;
+        width: 22px;
+        height: 22px;
+        line-height: 18px;
     }
     .dragable {
         position: absolute;
         right: 0;
         bottom: 0;
-        width: 10px;
-        height: 10px;
+        width: 0;
+        height: 0;
+        border-bottom: 16px solid #ff3;
+        border-left: 16px solid transparent;
         z-index: 1;
-        background-color: orange;
         cursor: se-resize;
     }
 }

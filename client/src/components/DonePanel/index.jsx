@@ -77,6 +77,8 @@ class DonePanel extends Component {
   };
 
   render() {
+    console.log("render-----DonePanel.");
+    console.log("------------------------------------------");
     return (
       <span className="done-panel">
         <Button type="primary" onClick={this.getLayData}>

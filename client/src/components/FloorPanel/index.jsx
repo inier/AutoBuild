@@ -11,7 +11,7 @@ import DelBtn from "../DelBtn";
 import Drag from "../Dragger";
 
 @inject("UIStore")
-@observer
+//@observer
 class FloorPanel extends Component {
   handleClick = e => {
     e.nativeEvent.stopImmediatePropagation();
@@ -19,9 +19,9 @@ class FloorPanel extends Component {
     this.props.handleClick(e.target.id, this.props.index);
   };
 
-  dragHandleClick = (id,parentId) => {
-    console.log("dragHandleClick");    
-    this.props.UIStore.dragActive(id,parentId);
+  dragHandleClick = (id, parentId) => {
+    console.log("dragHandleClick");      
+    this.props.UIStore.dragActive(id, parentId);
   };
   // 图片onload 事件
   imgOnload = e => {
@@ -39,39 +39,47 @@ class FloorPanel extends Component {
         this.props.UIStore.setFloorData({
           width,
           height
-        });
+        }, id);
       }
     });
   };
 
   // 根据 点击区域的 来设置 imgSrc 下面的clkArr
-  acordIdChangeData = (changeData, sourceData) => {
+  acordIdChangeData = (changeData) => {
+    
+    //var tt = this.props.UIStore.imgSrc;
     const parentdId = (changeData && changeData.parentId) || "";
     const childId = (changeData && changeData.id) || "";
     // 两次轮询
-    sourceData &&
-      sourceData.map((elm, idx) => {
-        if (elm.id == parentdId) {
-          elm.clkArr &&
-            elm.clkArr.map((elmt, indx) => {
-              if (elmt.id == childId) {
-                this.props.UIStore.setDragData({
-                  width: changeData.width ? changeData.width : elmt.width,
-                  height: changeData.height ? changeData.height : elmt.height,
-                  left: changeData.left ? changeData.left : elmt.left,
-                  top: changeData.top ? changeData.top : elmt.top
-                });
-                // 这里对每个 点击区域 的 dataTitle dataType url value
-                // if (changeData.key) {
-                //   this.props.UIStore.setDragData({
-                //     [elmt[changeData.key]]: changeData.value || ""
-                //   });
-                // }
-              }
-            });
-        }
-      });
-    return sourceData;
+    // sourceData &&
+    //   sourceData.map((elm, idx) => {
+    //     if (elm.id == parentdId) {
+    //       elm.clkArr &&
+    //         elm.clkArr.map((elmt, indx) => {
+    //           if (elmt.id == childId) {
+    //             this.props.UIStore.setDragData({
+    //               width: changeData.width ? changeData.width : elmt.width,
+    //               height: changeData.height ? changeData.height : elmt.height,
+    //               left: changeData.left ? changeData.left : elmt.left,
+    //               top: changeData.top ? changeData.top : elmt.top
+    //             });
+    //             // 这里对每个 点击区域 的 dataTitle dataType url value
+    //             // if (changeData.key) {
+    //             //   this.props.UIStore.setDragData({
+    //             //     [elmt[changeData.key]]: changeData.value || ""
+    //             //   });
+    //             // }
+    //           }
+    //         });
+    //     }
+    //   });
+    // return sourceData;    
+    this.props.UIStore.setDragData({
+      width: changeData.width,
+      height: changeData.height,
+      left: changeData.left || 0,
+      top: changeData.top || 0
+    }, childId, parentdId);
   };
 
   handleMouseUp = val => {
@@ -84,38 +92,28 @@ class FloorPanel extends Component {
     // parentId:this.props.parentId
     //}
     const valObj = val || "";
-    //
-    // 数据源
-    const imgArr = this.props.UIStore.imgSrc;
-    //  根据id 查询要改变的 数据
-    const changeData = this.acordIdChangeData(valObj, imgArr);
+    //  根据id 查询要改变的 数据    
+    const changeData = this.acordIdChangeData(valObj);
   };
 
   dragMove = val => {
     //  改变 拖拽 组件 positon x,y 回调
+    
     const valObj = val || "";
-    //
-    // 数据源
-    const imgArr = this.props.UIStore.imgSrc;
     //  根据id 查询要改变的 数据
-    const changeData = this.acordIdChangeData(valObj, imgArr);
-  };
-
-  // 这里是，那面 拖住啊 组建的 属性值的 ，函数回调
-  changeAttrList = data => {
-    // 这里添加属性
-    console.log(data);
-    const changeData = data;
-    const sourceData = this.props.UIStore.imgSrc;
-    // 数据
-    var changedData = this.acordIdChangeData(changeData, sourceData);
+    console.log("拖拽时坐标：");
+    console.log(valObj);
+    const changeData = this.acordIdChangeData(valObj);
   };
 
   // 需要对 this.state.imgSrc 数组，进行 改变 left，top，width，height
   // 删除 点击区域
   delDragArea = data => {
     // 改变数据
-    this.props.UIStore.delActiveDragBox(data);
+    this.props.UIStore.delActiveDragBox(data.id, data.parentId);
+    //判断是不是 删除 当前 选中 dragID 
+    data.id ==this.props.UIStore.dragOnId &&  this.props.UIStore.setDragId('');
+
   };
 
   // 删除图片=====================================
@@ -129,10 +127,8 @@ class FloorPanel extends Component {
     localStorage.setItem("themePageStorage", storageData);
   }
   // 拖拽 元素===============
-  render() {
-    console.log("start render after componentWillMount");
-
-    console.log("------------------------------------------");
+  render() {    
+    console.log("render-----OptPanel.");
 
     return (
       <div className="img_wrap">
@@ -148,6 +144,7 @@ class FloorPanel extends Component {
             alt=""
             id={this.props.id}
             onLoad={this.imgOnload}
+            draggable="false"
           />
           {/* 删除图片 ===按钮 */}
           <DelBtn id={this.props.id} clickCb={this.delImg} />
@@ -157,12 +154,11 @@ class FloorPanel extends Component {
                 <Drag
                   key={index}
                   id={elm.id}
-                  isActive={!!(this.props.UIStore.dragOnId === elm.id)}
+                  isActive={!!(this.props.dragOnId === elm.id)}
                   parentId={this.props.id}
                   handleClick={this.dragHandleClick}
                   dragMove={this.dragMove}
                   handleMouseUp={this.handleMouseUp}
-                  changeAttrList={this.changeAttrList}
                   delDragArea={this.delDragArea}
                 />
               );
