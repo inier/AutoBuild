@@ -8,28 +8,37 @@ class UIStore {
   constructor(rootStore, persistData) {
     this.rootStore = rootStore;
     this.persistData = persistData;
-    //this.persistData.set("count", this);
-    //this.setCount(0);
+
+    this.persistData.set('pageType', this);
+    this.persistData.set('pageTitle', this);
+    this.persistData.set('pageKeyword', this);
+    this.persistData.set('pageDescription', this);
+    //设置初始值
+    // this.initData("pageType", "pc");
+    // this.initData("pageTitle", "");
+    // this.initData("pageKeyword", "");
+    // this.initData("pageDescription", "");
   }
 
   /**
    * 专题页面信息相关
    */
+  @observable pageType = this.persistData.get('pageType', this); // 网页 类型 app ，pc
+  @observable pageTitle = this.persistData.get('pageTitle', this); // 网页 title
+  @observable pageKeyword = this.persistData.get('pageKeyword', this); // 网页 keyword
+  @observable pageDescription = this.persistData.get('pageDescription', this); // 网页 description
 
-  @observable pageType = "pc"; // 网页 类型 app ，pc
-  @observable pageTitle = ""; // 网页 title
-  @observable pageKeyword = ""; // 网页 keyword
-  @observable pageDescription = ""; // 网页 description
+  @observable imgSrc = []; //选配数据集合
+  @observable floorOnId = ''; //激活的楼层Id
+  @observable dragOnId = ''; //激活的拖拽块Id
 
-  @observable downloadUrl = ""; // 下载地址
-  @observable previewUrl = ""; // 预览地址
+  @observable downloadUrl = ''; // 下载地址
+  @observable previewUrl = ''; // 预览地址
 
-  @observable imgSrc = [];
-  @observable floorOnId = "";
-  @observable dragOnId = "";
-
-  @observable imgList = [];
-  @observable choosed = {};
+  @action
+  initData(key, value) {
+    this[key] = value;
+  }
 
   // 更新对象
   updateRootData = (srcObj, data) => {

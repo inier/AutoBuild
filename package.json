@@ -1,0 +1,9 @@
+{
+  "name": "autobuilder",
+  "description": "AutoBuilder",
+  "version": "0.0.1474",
+  "scripts": {
+    "start": "npm run server",
+    "server": "node client/server && node server/server"
+  }
+}

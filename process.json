@@ -1,0 +1,8 @@
+{
+    "apps": [{
+        "name": "AutoBuild-Client",
+        "script": "client",
+        "watch": "./client/build/",
+        "log_date_format": "YYYY-MM-DD HH:mm Z"
+    }]
+}
