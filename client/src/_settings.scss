@@ -3,9 +3,13 @@ $std-white: rgb(255, 255, 255);
 $std-gray: rgb(196, 196, 196);
 $std-black: rgb(20, 20, 20);
 $std-blue: #1890ff;
+$std-yellow: orange;
+$std-red: #f33;
 //应用全局设置
 $global-color-bg: $std-gray;
-$global-primary: $std-blue;
+$global-color-primary: $std-blue;
+$global-color-extreme: $std-red;
+$global-color-warning: $std-yellow;
 $global-W: 1080px;
 $content-W: 900px;
 $header-H: 50px;

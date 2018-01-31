@@ -21,13 +21,14 @@ var imgZone = require('./utils/compress');
 var config = require('./config');
 console.log('当前运行环境为：' + config.env);
 
-var hostName = 'localhost';
+// 服务器地址
+var host = config.host || 'localhost';
 // 将端口号设置为配置文件的端口号，默认值为8080
 var port = utils.normalizePort(config.port || '8080');
 // 打印输出端口号
 //console.log('当前监听端口号为： ' + port);
 
-var root = '../client/build';
+var root = './build';
 var downDIST = `./build`;
 var autoBuildBasePath = './components/AutoBuild';
 
@@ -156,8 +157,8 @@ app.post('/getjson', (req, res) => {
       res.send({
         result: 0,
         data: {
-          previewUrl: `preview_${pageType}/index.html`,
-          downloadUrl: `${pageType}.zip`//'./app.zip'          
+          previewUrl: `http://${host}:${port}/preview_${pageType}/index.html`,
+          downloadUrl: `http://${host}:${port}/${pageType}.zip`//'./app.zip'
         }
       });
       // res.download(`./${zipFileName}.zip`,(err)=>{
@@ -208,8 +209,8 @@ app.get('/pc.zip', (req, res) => {
 });
 
 // 设置 服务器端口号:port
-// 主机名 ：hostName
-app.listen(port, hostName, () => {
-  console.log(`server is running http://${hostName}:${port}`);
+// 主机名 ：host
+app.listen(port, host, () => {
+  console.log(`server is running http://${host}:${port}`);
 });
 

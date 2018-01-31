@@ -87,7 +87,7 @@ class RootStore {
    */
   _handleData(json, url, params) {
     this.hideLoading();
-    if (!json || !json.result) return {};
+    if (!json || typeof json.result === "undefined") return {};
     switch (json.result) {
       //获取数据成功
       case '0':

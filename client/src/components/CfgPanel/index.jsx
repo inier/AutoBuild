@@ -3,7 +3,7 @@
 import React, { Component } from "react";
 import { inject, observer } from "mobx-react";
 // import antd design 下拉框 和 input 组件
-import { Form, Select, Input,Switch  } from "antd";
+import { Form, Select, Input, Switch } from "antd";
 import "./index.scss";
 
 // 构造 下拉菜单  数据
@@ -66,7 +66,7 @@ class CfgPanel extends Component {
     this.store = props.UIStore;
     // 通过id  取得 当前操作的 点击区域
     // 初始化 
-    
+
     // 需要state？
     this.state = {
       cfgData: dataTypeArr,
@@ -94,9 +94,9 @@ class CfgPanel extends Component {
     // val 得到的是 dataType
     const dataType = JSON.parse(val).value;
     this.store.setDragData({
-      dataType:dataType
+      dataType: dataType
     });
-    this.store.setDragData({typeData:JSON.parse(val)});
+    this.store.setDragData({ typeData: JSON.parse(val) });
     const dragId = this.store.dragOnId;
     this.store.setDragId('');
     this.store.setDragId(dragId);
@@ -120,10 +120,10 @@ class CfgPanel extends Component {
     this.store.setDragId(dragId);
   };
   // 开关========
-  handleSwitch (val){
+  handleSwitch = (val) => {
     console.log(val);
     this.store.setDragData({
-      isSetTargetPage:val
+      isSetTargetPage: val
     });
   }
   // 设置 领取代金券 后 跳转页面 type
@@ -134,9 +134,9 @@ class CfgPanel extends Component {
     temObj.typeData = JSON.parse(val);
     const dataType = temObj.typeData.value;
     this.store.setDragData({
-      dataType:dataType
+      dataType: dataType
     });
-    this.store.setDragData({afterGetBratchData:temObj});
+    this.store.setDragData({ afterGetBratchData: temObj });
     const dragId = this.store.dragOnId;
     this.store.setDragId('');
     this.store.setDragId(dragId);
@@ -172,7 +172,7 @@ class CfgPanel extends Component {
     // 领取代金券后 跳转页面的 typeData
     const bratch_select = afterGetBratchData && afterGetBratchData.typeData || '选择领取代金券后跳转页面类型';
     const bratch_selectVal = Object.prototype.toString.call(bratch_select) === '[object Object]' && JSON.stringify(bratch_select) || bratch_select;
-    //
+    //判断是不是pc 
     // this.store // 
     return (
       <div className="cfgPanel" id={this.props.UIStore.dragOnId}>
@@ -190,7 +190,7 @@ class CfgPanel extends Component {
               }
               style={{ width: "100%" }}
               value={selecValue}
-              defaultValue = {selecValue}
+              defaultValue={selecValue}
               onChange={this.handleSelectCg}
             >
               {options}
@@ -212,45 +212,60 @@ class CfgPanel extends Component {
           )}
 
           {/* data-url */
-          typeData.isInputUrl && (
-            <FormItem {...formItemLayout} label="*跳转地址：">
-              <TextArea
-                data-type="url"
-                placeholder={typeData.inputUrlTip}
-                onChange={this.handleInputCg}
-                value={sourceData.url}
-                defaultValue={sourceData.url}
-                autosize={{ minRows: 2, maxRows: 6 }}
-              />
-            </FormItem>
-          )}
+            typeData.isInputUrl && (
+              <FormItem {...formItemLayout} label="*跳转地址：">
+                <TextArea
+                  data-type="url"
+                  placeholder={typeData.inputUrlTip}
+                  onChange={this.handleInputCg}
+                  value={sourceData.url}
+                  defaultValue={sourceData.url}
+                  autosize={{ minRows: 2, maxRows: 6 }}
+                />
+              </FormItem>
+            )}
 
-          
+
           {/* 设置领取代金券 后 跳转地址 */}
           {
             isBatchId && (
               <div>
                 <div>*配置领取代金券后 ,跳转地址</div>
-                <Switch defaultChecked={false} onChange={this.handleSwitch.bind(this)} />
+                <Switch defaultChecked={false} onChange={this.handleSwitch} />
                 {
                   isSetTargetPage && <FormItem {...formItemLayout} label="*跳转类型：">
-                  <Select
-                    showSearch
-                    placeholder="选择跳转页面类型"
-                    optionFilterProp="children"
-                    filterOption={(input, option) =>
-                      option.props.searchVal
-                        .toLowerCase()
-                        .indexOf(input.toLowerCase()) >= 0
-                    }
-                    style={{ width: "100%" }}
-                    value={bratch_selectVal}
-                    defaultValue = {bratch_selectVal}
-                    onChange={this.handleSelectCgForBrath}
-                  >
-                    {options}
-                  </Select>
-                </FormItem>                
+                    <Select
+                      showSearch
+                      placeholder="选择跳转页面类型"
+                      optionFilterProp="children"
+                      filterOption={(input, option) =>
+                        option.props.searchVal
+                          .toLowerCase()
+                          .indexOf(input.toLowerCase()) >= 0
+                      }
+                      style={{ width: "100%" }}
+                      value={bratch_selectVal}
+                      defaultValue={bratch_selectVal}
+                      onChange={this.handleSelectCgForBrath}
+                    >
+                      {options}
+                    </Select>
+                  </FormItem>
+                }
+                {/* data-title*/}
+                {
+                  isSetTargetPage && bratch_select.isInputTitle && (
+                    <FormItem {...formItemLayout} label="跳转标题：">
+                      <TextArea
+                        data-type="dataTitle"
+                        placeholder="请输入跳转页面的标题"
+                        onChange={this.handleInputCgForBrath}
+                        value={afterGetBratchData.dataTitle}
+                        defaultValue={afterGetBratchData.dataTitle}
+                        autosize={{ minRows: 2, maxRows: 4 }}
+                      />
+                    </FormItem>
+                  )
                 }
                 {/* data-url */}
                 {
@@ -264,22 +279,7 @@ class CfgPanel extends Component {
                         defaultValue={afterGetBratchData.url}
                         autosize={{ minRows: 2, maxRows: 6 }}
                       />
-                  </FormItem>
-                  )
-                }
-                {/* data-title*/}
-                {
-                  isSetTargetPage && bratch_select.isInputTitle && (
-                    <FormItem {...formItemLayout} label="提示信息：">
-                      <TextArea
-                        data-type="dataTitle"
-                        placeholder="请输入模块的预留提示信息"
-                        onChange={this.handleInputCgForBrath}
-                        value={afterGetBratchData.dataTitle}
-                        defaultValue={afterGetBratchData.dataTitle}
-                        autosize={{ minRows: 4, maxRows: 6 }}
-                      />
-                  </FormItem>
+                    </FormItem>
                   )
                 }
               </div>

@@ -94,11 +94,19 @@ class UIStore {
 
   //删除List中的指定项
   delListItem = (id) => {
-    // list = list.slice().filter(it => {
-    //   return it.id != id;
-    //   //srcArr.splice(index, 1); //有bug
-    // });
+    // 需要判断删除的 楼层中是不是 dragOnId 
+    const delFloorData = this.getListItem(id);
+    const isFindDragdIdInDelData = (delFloorData.clkArr.length && delFloorData.clkArr.filter((elm, idx) => {
+      return elm.id === this.dragOnId;
+    })) || '';
+
+    //var isFindDragdIdInDelData = !!this.getSubListItemIndex(this.dragOnId);
+    isFindDragdIdInDelData.length && this.setDragId('');
+
     this.imgSrc.splice(this.getListItemIndex(id), 1);
+
+    // 实时设置 floorOnId
+    (!this.imgSrc.length || id == this.floorOnId) && this.setFloorOnId('');
   };
 
   // subList相关
@@ -109,6 +117,9 @@ class UIStore {
     * 获取clkArr中的列表项
     */
   getSubListItem = (id = this.dragOnId, parentId = this.floorOnId) => {
+    if (!id) {
+      return {};
+    }
     if (!parentId) {
       message.error('该操作需要先选中楼层!');
       return;
@@ -117,7 +128,6 @@ class UIStore {
     const tResult = this.imgSrc.slice().filter((item, pIndex) => {
       return item.id === parentId;
     });
-    console.log(tResult);
     if (tResult[0].clkArr === undefined) {
       return {};
     }
@@ -139,32 +149,12 @@ class UIStore {
     if (pList[pIndex]["clkArr"]) {
       for (var prop in data) {
         if (data.hasOwnProperty(prop)) {
-          typeof data[prop] !='undefined' && (pList[pIndex]["clkArr"][cIndex][prop] = data[prop]);
+          typeof data[prop] != 'undefined' && (pList[pIndex]["clkArr"][cIndex][prop] = data[prop]);
         }
       }
     }
-    console.log(pList[pIndex]["clkArr"][cIndex]);
-    this.updateRootData(this.imgSrc, pList);
-    console.log(this.imgSrc[pIndex]["clkArr"][cIndex]);
 
-    // var pList = [].concat(this.imgSrc.slice());    
-    // pList.forEach((item, pIndex) => {
-    //   if (item.id === parentId) {
-    //     var cList = item["clkArr"];
-    //     if (cList) {
-    //       cList.forEach((it, cIndex) => {
-    //         if (it.id === id) {              
-    //           for (var prop in data) {
-    //             if (data.hasOwnProperty(prop)) {
-    //               pList[pIndex]["clkArr"][cIndex][prop] = data[prop];
-    //             }
-    //           }
-    //         }
-    //       });         
-    //     }
-    //   }
-    // });
-    // this.imgSrc = pList;
+    this.imgSrc = pList;
   };
   //List的子级数据追加
   // genes: 为父->子的多级基因链,如  [pArr,cArr]
@@ -182,18 +172,7 @@ class UIStore {
     }
     this.pushListData(pList[pIndex].clkArr, data);
 
-    
-    // pList.forEach((item, pIndex) => {
-    //   if (item.id === parentId) {
-    //     var cList = item.clkArr;
-    //     if (typeof cList === "undefined") {
-    //       pList[pIndex].clkArr = [];         
-    //     }
-    //     this.pushListData(pList[pIndex].clkArr, data);        
-    //   }
-    // });
-
-    this.updateRootData(this.imgSrc, pList);
+    this.imgSrc = pList;
   };
 
   delSubListItem = (id, parentId) => {
@@ -209,7 +188,11 @@ class UIStore {
         return it.id !== id;
       });
     }
-    this.updateRootData(this.imgSrc, pList);
+
+    const tDragId = this.dragOnId;
+    tDragId == id && this.setDragId('');
+
+    this.imgSrc = pList;
   };
 
   // 选择 网页 类型 pc，app
@@ -310,7 +293,11 @@ class UIStore {
   };
 
   @action
-  dragActive = (id, parentId=this.floorOnId) => {    
+  dragActive = (id, parentId = this.floorOnId) => {
+    if (parentId !== this.floorOnId) {
+      this.floorActive(parentId);
+    }
+
     if (!(this.dragOnId && id === this.dragOnId)) {
       this.setDragId(id);
       // this.setSubListItem({
@@ -330,6 +317,17 @@ class UIStore {
     this.delSubListItem(id, parentId);
   };
 
+  @action
+  setDownloadUrl = (str) => {
+    this.downloadUrl = str;
+  };
+
+  @action
+  setPreviewUrl = (str) => {
+    this.previewUrl = str;
+  };
+
+
   /**
    * 提交构建数据接口
    * @param {*提交数据} data
@@ -342,15 +340,16 @@ class UIStore {
     return this.rootStore.sendPost(ApiUrls.DONE, data).then(
       result => {
         if (!result.data) return;
-        console.log("Success");
-        console.log(result);
-        if (result.result == 0 && result.data) {
-          result.data.downloadUrl && (this.downloadUrl = result.data.downloadUrl);
-          result.data.previewUrl && (this.previewUrl = result.data.previewUrl);
+        //console.log("Success");
+        //console.log(result);
+        if (result.result == 0 && result.data) {          
+          result.data.downloadUrl && this.setDownloadUrl(result.data.downloadUrl);
+          result.data.previewUrl && this.setPreviewUrl(result.data.previewUrl);
+          message.success("构建完成！可直接预览或下载专题包，感谢使用！");
         }
       },
       function (err, msg) {
-        console.log(err);
+        //console.log(err);
         message.error(msg);
       }
     );
@@ -373,6 +372,6 @@ class UIStore {
         console.log(msg);
       }
     );
-  }  
+  }
 }
 export default UIStore;

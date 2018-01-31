@@ -1,9 +1,11 @@
 import React, { Component } from "react";
 import "./index.scss";
 import { Icon, Button } from "antd";
-import { inject } from "mobx-react";
+import { observer, inject } from "mobx-react";
+import { Popconfirm, message } from "antd";
 
 @inject("UIStore")
+@observer
 class DonePanel extends Component {
   constructor(props) {
     super(props);
@@ -72,42 +74,48 @@ class DonePanel extends Component {
         description: this.props.UIStore.pageDescription
       });
     } else {
-      alert("请先选择图片");
+      message.error("神马都没有，搞个毛线啊!");
     }
   };
 
+  confirm = (e) => {
+    message.warning('开始构建，先休息一会儿吧！');
+    this.getLayData();
+  }
+
+  cancel = (e) => {
+    //console.log(e);
+    message.info('革命尚未成功，同志仍需努力！');
+  }
+
   render() {
-    console.log("render-----DonePanel.");
-    console.log("------------------------------------------");
     return (
       <span className="done-panel">
-        <Button type="primary" onClick={this.getLayData}>
-          构建<Icon type="caret-right" />
+        <Button
+          href={this.props.UIStore.previewUrl}
+          style={{
+            display: this.props.UIStore.previewUrl ? "inline-block" : "none"
+          }}
+          className="mr preview"
+          target="_blank"
+        >
+          预览<Icon type="aliyun" />
         </Button>
-        {
-          <a
-            href={this.props.UIStore.previewUrl}
-            style={{
-              display: this.props.UIStore.previewUrl ? "inline-block" : "none"
-            }}
-            className="ml"
-            target="_blank"
-          >
-            预览<Icon type="aliyun" />
-          </a>
-        }
-        {
-          <a
-            href={this.props.UIStore.downloadUrl}
-            style={{
-              display: this.props.UIStore.downloadUrl ? "inline-block" : "none"
-            }}
-            className="ml"
-            download={this.props.UIStore.downloadUrl}
-          >
-            点击下载<Icon type="download" />
-          </a>
-        }
+        <Button
+          href={this.props.UIStore.downloadUrl}
+          style={{
+            display: this.props.UIStore.downloadUrl ? "inline-block" : "none"
+          }}
+          className="mr download"
+          download={this.props.UIStore.downloadUrl}
+        >
+          下载<Icon type="download" />
+        </Button>
+        {this.props.UIStore.imgSrc.length && <Popconfirm title="各项配置是否已完成?" onConfirm={this.confirm} onCancel={this.cancel} okText="确定" cancelText="稍等">
+          <Button type="primary" onClick={this.getLayData}>
+            构建<Icon type="caret-right" />
+          </Button>
+        </Popconfirm>}
         {/* <button onClick = {this.storageData.bind(this)}>保存当前配置数据</button> */}
       </span>
     );

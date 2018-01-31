@@ -20,7 +20,7 @@ class FloorPanel extends Component {
   };
 
   dragHandleClick = (id, parentId) => {
-    console.log("dragHandleClick");      
+    console.log("dragHandleClick");
     this.props.UIStore.dragActive(id, parentId);
   };
   // 图片onload 事件
@@ -46,7 +46,7 @@ class FloorPanel extends Component {
 
   // 根据 点击区域的 来设置 imgSrc 下面的clkArr
   acordIdChangeData = (changeData) => {
-    
+
     //var tt = this.props.UIStore.imgSrc;
     const parentdId = (changeData && changeData.parentId) || "";
     const childId = (changeData && changeData.id) || "";
@@ -77,8 +77,8 @@ class FloorPanel extends Component {
     this.props.UIStore.setDragData({
       width: changeData.width,
       height: changeData.height,
-      left: changeData.left || 0,
-      top: changeData.top || 0
+      left: changeData.left,
+      top: changeData.top
     }, childId, parentdId);
   };
 
@@ -92,13 +92,13 @@ class FloorPanel extends Component {
     // parentId:this.props.parentId
     //}
     const valObj = val || "";
-    //  根据id 查询要改变的 数据    
+    //  根据id 查询要改变的 数据
     const changeData = this.acordIdChangeData(valObj);
   };
 
   dragMove = val => {
     //  改变 拖拽 组件 positon x,y 回调
-    
+
     const valObj = val || "";
     //  根据id 查询要改变的 数据
     console.log("拖拽时坐标：");
@@ -112,7 +112,10 @@ class FloorPanel extends Component {
     // 改变数据
     this.props.UIStore.delActiveDragBox(data.id, data.parentId);
     //判断是不是 删除 当前 选中 dragID 
-    data.id ==this.props.UIStore.dragOnId &&  this.props.UIStore.setDragId('');
+    //const tDragId = this.props.UIStore.dragOnId;
+    //data.id == this.props.UIStore.dragOnId &&  
+
+
 
   };
 
@@ -127,7 +130,7 @@ class FloorPanel extends Component {
     localStorage.setItem("themePageStorage", storageData);
   }
   // 拖拽 元素===============
-  render() {    
+  render() {
     console.log("render-----OptPanel.");
 
     return (
@@ -150,12 +153,19 @@ class FloorPanel extends Component {
           <DelBtn id={this.props.id} clickCb={this.delImg} />
           {this.props.clkArr &&
             this.props.clkArr.map((elm, index) => {
+              var styleObj = {
+                width: elm.width,
+                height: elm.height,
+                left: elm.left || 0,
+                top: elm.top || 0
+              };
               return (
                 <Drag
-                  key={index}
+                  key={elm.id}
                   id={elm.id}
-                  isActive={!!(this.props.dragOnId === elm.id)}
                   parentId={this.props.id}
+                  styleObj={styleObj}
+                  isActive={!!(this.props.dragOnId === elm.id)}
                   handleClick={this.dragHandleClick}
                   dragMove={this.dragMove}
                   handleMouseUp={this.handleMouseUp}

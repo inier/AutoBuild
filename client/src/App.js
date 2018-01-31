@@ -44,10 +44,15 @@ class App extends Component {
                 component={() => <Async load={import("./views/Home")} />}
               />
               <Route
+                path="/about"
+                exact
+                component={() => <Async load={import("./views/about")} />}
+              />
+              {/* <Route
                 path="/mine"
                 exact
                 component={() => <Async load={import("./views/Mine")} />}
-              />
+              />              
               <Route
                 path="/login"
                 exact
@@ -62,15 +67,19 @@ class App extends Component {
                 path="/esnext"
                 exact
                 component={() => <Async load={import("./App.ESNext")} />}
-              />
+              /> */}
 
               <Footer>
                 <ul className="router">
                   <li>
                     <Link to="/">首页</Link>
                   </li>
+                  
                   <li>
-                    <Link to="/mine">帮助</Link>
+                    <Link to="/about">关于</Link>
+                  </li>
+                  {/* <li>
+                    <Link to="/mine">使用须知</Link>
                   </li>
                   <li>
                     <Link to="/login">登录</Link>
@@ -80,7 +89,7 @@ class App extends Component {
                   </li>
                   <li>
                     <Link to="/esnext">Mobx ESNext</Link>
-                  </li>
+                  </li> */}
                 </ul>
                 <Foot>{UIConfig.footer.content}</Foot>
               </Footer>

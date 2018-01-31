@@ -15,8 +15,8 @@ class AddDrag extends Component {
     // 得到选中中的 id this.state.floorOnId, 找到这数据中额id 向这里对象中添加 数据
     // 设置添加对象=============   
     var obj = {
-      left: "",
-      top: "",
+      left: 0,
+      top: 0,
       width: 50,
       height: 50,
       id: new Date().getTime() + ""

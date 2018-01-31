@@ -6,21 +6,26 @@ import Dragger from "react-dragger-r";
 
 // 引入 右上角 删除 按钮 组件
 import DelBtn from "../DelBtn";
-
+// 设置初始化 最小 w，h
+const renderWidth = 100;
+const renderHeight = 100;
+// 设置 resize 最小，w，h
+const minWidth = 30;
+const minHeight = 30;
 const doc = document;
 @inject("UIStore")
 class Drag extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      oringX: 0,
-      oringY: 0,
-      width: 50,
-      height: 50,
+      width: renderWidth,
+      height:renderHeight,
       left: 0,
       top: 0,
-      lastW: 50,
-      lastH: 50,
+      oringX: 0,
+      oringY: 0,
+      lastW: renderWidth,
+      lastH: renderHeight,
       id: this.props.id,
       attrList: [
         {
@@ -68,18 +73,44 @@ class Drag extends Component {
 
     this.props.handleMouseUp(obj);
   };
-  dragMove = (e, x, y) => {
-    this.props.handleClick(e.currentTarget.id);
-    // x,y , 获取 拖拽的   x,y
+  dragEnd = (e,x,y) => {
+    console.log('drag move'+x,y);
+    //目标对象
+    const tgt = e.currentTarget;
+    //的都left ，top
+    const tranfrom = tgt && tgt.style && tgt.style.transform || '';
+    if(!tranfrom) return;
+    const leftTopVal = tranfrom && tranfrom.split('(')[1].split(')')[0].split(',');
+    const left = leftTopVal[0].replace('px','');
+    const top = leftTopVal[1].replace('px','');
     const obj = {
-      left: x,
-      top: y,
+      left: Number(left),
+      top:Number(top),
       id: this.props.id,
       parentId: this.props.parentId
     };
+    //const target = e.target.parentElement.parentElement.parentElement;
+    const pId = this.props.parentId;
+    const cId = this.props.id;
+    this.props.UIStore.setDragData(obj, cId, pId);
+  }
+  dragMove = (e, x, y) => {
+    console.log(x + ":" + y);
+    console.log(e);
+    // x,y , 获取 拖拽的   x,y
+    // this.setState({
+    //   left: x,
+    //   top: y
+    // });
 
-    this.props.dragMove(obj);
+    // const obj = {
+    //   left: x,
+    //   top: y,
+    //   id: this.props.id,
+    //   parentId: this.props.parentId
+    // };
 
+    // this.props.dragMove(obj);
   };
   move = e => {
     e.stopPropagation();
@@ -91,18 +122,20 @@ class Drag extends Component {
     var height = this.state.lastH;
 
     const difWidth = startX - this.state.oringX + width;
-
     const difHeight = startY - this.state.oringY + height;
-
+    console.log(difWidth,difHeight);
     this.setState({
-      width: difWidth,
-      height: difHeight
+      width: difWidth < minWidth && minWidth || difWidth,
+      height: difHeight < minHeight && minHeight || difHeight
     });
     // const data = {
     //   left:difWidth,
     //   top:difHeight
     // };
-    // this.props.UIStore.setDragData(data);
+    // const target = e.target.parentElement.parentElement.parentElement;
+    // const pId = target.getAttribute("data-parentid");
+    // const cId = target.id;
+    // this.props.UIStore.setDragData(data, cId, pId);
   };
   resizeStart = e => {
     e.stopPropagation();
@@ -135,12 +168,14 @@ class Drag extends Component {
       lastW,
       lastH
     });
-    // const data = {
-    //   width:lastW,
-    //   height:lastH
-    // };
-    // this.props.UIStore.setDragData(data);
-    //  回调 给 父组件  的方法
+    const data = {
+      width: lastW,
+      height: lastH
+    };
+    const target = e.target.parentElement.parentElement.parentElement;
+    const pId = target.getAttribute("data-parentid");
+    const cId = target.id;
+    this.props.UIStore.setDragData(data, cId, pId);
   };
   // 那个插件 传过来 的数据 ，这这里修改
   changeValue = data => {
@@ -176,18 +211,6 @@ class Drag extends Component {
     // 这里吧参数，传入到 addImg 组建中，给 点击区域的 数据 总揽添加 list 属性
     this.props.changeAttrList(sendToParentObj);
   };
-  // 删除 组建 点击删除
-  // 向父组件 同行，利用this.props
-  doDelete = (e) => {
-    console.log("删除拖拽框");
-    const delData = {
-      id: this.props.id,
-      parentId: this.props.parentId
-    };
-    this.props.delDragArea(delData);
-
-    // 阻止 事件冒泡==============
-  };
   // 清空 input 框 value 值
   clearInputVal = data => {
     console.log("dragger" + data);
@@ -202,6 +225,20 @@ class Drag extends Component {
       attrList: temArr
     });
   };
+
+  // 删除 组建 点击删除
+  // 向父组件 同行，利用this.props
+  doDelete = (e) => {
+    console.log("删除拖拽框");
+    const delData = {
+      id: this.props.id,
+      parentId: this.props.parentId
+    };
+    this.props.delDragArea(delData);
+
+    // 阻止 事件冒泡==============
+  };
+
   componentWillUnmount() {
     console.log("removed a dragger");
   }
@@ -213,7 +250,7 @@ class Drag extends Component {
       height: `${this.state.height}px`
     };
     console.log("render-----Dragger.");
-        
+
     return (
       <div onClick={this.handleClick} id={this.props.id} data-parentid={this.props.parentId}>
         <Dragger
@@ -221,9 +258,10 @@ class Drag extends Component {
           style={styleObj}
           bounds="parent"
           onMove={this.dragMove}
+          onDragEnd={this.dragEnd}
         >
-          <div className={this.props.isActive ? "content ac" : "content"}>            
-          {/* 点击删除 */}
+          <div className={this.props.isActive ? "content ac" : "content"}>           
+            {/* 点击删除 */}
             <DelBtn clickCb={this.doDelete} />
             {/* 拖住啊，改变w，h */}
             <i

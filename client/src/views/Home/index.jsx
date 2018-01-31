@@ -9,6 +9,8 @@ import MainPanel from "../../components/MainPanel";
 import InfoPanel from "../../components/InfoPanel";
 import FuncPanel from "../../components/FuncPanel";
 import CfgPanel from "../../components/CfgPanel";
+import PcCfgPanel from "../../components/PcCfgPanel";
+
 
 const { Content, Sider } = Layout;
 const Panel = Collapse.Panel;
@@ -40,7 +42,7 @@ class Home extends Component {
               header={<Title iconType="appstore-o" content="模块信息" />}
               key="1"
             >
-              {!!this.props.UIStore.dragOnId && <CfgPanel />}
+              {!!this.props.UIStore.dragOnId && (this.props.UIStore.pageType == 'app' && <CfgPanel /> || <PcCfgPanel />) }
             </Panel>
           </Collapse>
           <Divider>编辑功能区</Divider>

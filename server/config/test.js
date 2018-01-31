@@ -4,6 +4,7 @@
  */
 var config = {
     env: 'test', //环境名称
+    host: "localhost", //服务器地址
     port: 8082,         //服务端口号
     mysql_config: {
         //mysql数据库配置
@@ -16,4 +17,4 @@ var config = {
     },
 
 };
-module.exports=config;
+module.exports = config;

@@ -1,5 +1,20 @@
-.done-panel{
+@import "../../_settings";
+
+.done-panel {
     display: inline-block;
-    min-width: 300px;    
-    text-align: right; 
+    min-width: 300px;
+    text-align: right;    
+    .mr {
+        margin-right: 10px;
+    }
+    .download {
+        color: #fff;
+        border-color: $global-color-extreme;
+        background-color: $global-color-extreme;
+    }
+    .preview {
+        color: #fff;
+        border-color: $global-color-warning;
+        background-color: $global-color-warning;
+    }
 }

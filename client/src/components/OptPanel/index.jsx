@@ -4,6 +4,7 @@ import { Layout } from "antd";
 import styles from "./index.scss";
 
 import FloorPanel from "../FloorPanel";
+//import Console from "../Console";
 
 @inject("UIStore")
 @observer
@@ -13,14 +14,11 @@ class OptPanel extends Component {
   }
 
   handleClick = (id, index) => {
-    console.log("floorHandleClick");    
+    console.log("floorHandleClick");
     this.props.UIStore.floorActive(id, index);
   };
 
   render() {
-    console.log("render-----OptPanel.");
-    console.log("------------------------------------------");
-    //var tFloorId = this.props.UIStore.floorOnId;
     var floors = this.props.UIStore.imgSrc.map((elm, idx) => {
       var tProps = {
         id: elm.id,
@@ -39,7 +37,19 @@ class OptPanel extends Component {
       );
     });
 
-    return <Layout className={styles.imgCoporation}>{floors}</Layout>;
+    // var tt = this.props.UIStore.getDragItem();
+    // var logs = {
+    //   id: tt.id || "",
+    //   left: tt.left || 0,
+    //   top: tt.top || 0,
+    //   width: tt.width || 0,
+    //   height: tt.height || 0
+    // };
+
+    return (<Layout className={styles.imgCoporation}>
+      {floors}
+      {/* {tt && <Console {...logs} />} */}
+    </Layout>);
   }
 }
 export default OptPanel;

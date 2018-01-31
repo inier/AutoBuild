@@ -9,14 +9,14 @@
     text-align: center;
     color: #fff;
     vertical-align: top;
-    background-color: $global-primary;
+    background-color: $global-color-primary;
     -webkit-box-shadow: 0 0 15px $global-color-shadow;
     box-shadow: 0 0 15px $global-color-shadow;
     -webkit-transition: all 0.3s ease-in-out;
     transition: all 0.3s ease-in-out;
     &:hover {
         color: #fff;
-        background-color: darken($global-primary, 15%);
+        background-color: darken($global-color-primary, 15%);
         -webkit-transition: all 0.3s ease-in-out;
         transition: all 0.3s ease-in-out;
     }
