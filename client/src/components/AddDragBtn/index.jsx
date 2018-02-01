@@ -9,7 +9,6 @@ class AddDrag extends Component {
   constructor(props) {
     super(props);
   }
-
   handleClickAdd = e => {
     console.log("add");
     // 得到选中中的 id this.state.floorOnId, 找到这数据中额id 向这里对象中添加 数据
@@ -17,8 +16,8 @@ class AddDrag extends Component {
     var obj = {
       left: 0,
       top: 0,
-      width: 50,
-      height: 50,
+      width: 100,
+      height: 100,
       id: new Date().getTime() + ""
     };
     var tFloorOnId = this.props.UIStore.floorOnId;

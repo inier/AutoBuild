@@ -88,6 +88,10 @@ class CfgPanel extends Component {
     });
     return children;
   }
+  // 数据 加工厂
+  dataCoperation(data,fn){
+    return fn(data);
+  }
   // 下拉框 change 触发 事件
   handleSelectCg = val => {
     // 这里执行回调，刷新数据
@@ -112,9 +116,28 @@ class CfgPanel extends Component {
     //     break;
     //   }
     // }
+    // 如果是代金券 cart/receive-coupon.html?batchId=xxxx， 用户输入的 ‘xxxx’,需手动拼接
+    const sourceData = this.store.getDragItem(this.props.UIStore.dragOnId);
+    const temObj = sourceData.typeData || {};
+    // 如果typeData 中有 属性 targetPage ，判断为 代金券
+    const isBratchPag = temObj.targetPage || '';
+    // 是否 配置 领取代金券后面的 数据
+    const isSetTargetPage = sourceData.isSetTargetPage || '';
+    // 判断 is 先设置 后面的页面
+    const afterGetBratchData = sourceData.afterGetBratchData || '';
+    const leftUrl = isSetTargetPage && afterGetBratchData && JSON.stringify({
+      dataType:afterGetBratchData.dataType || '',
+      dataTitle:afterGetBratchData.dataTitle || '',
+      dataUrl:afterGetBratchData.url || ''
+    }) || '';
+    const val = (tType === 'url' && isBratchPag && this.dataCoperation(e.target.value,function (data){
+      return `cart/receive-coupon.html?batchId=${data}${leftUrl ? '&targetPage='+leftUrl : ''}`;
+    })) || e.target.value;
+    // 
     this.store.setDragData({
-      [tType]: e.target.value
+      [tType]: val
     });
+    //
     const dragId = this.store.dragOnId;
     this.store.setDragId('');
     this.store.setDragId(dragId);
@@ -125,6 +148,24 @@ class CfgPanel extends Component {
     this.store.setDragData({
       isSetTargetPage: val
     });
+    // 不设置，关闭后，清空 afterGetBratchData 这个属性值
+    const sourceData = this.store.getDragItem(this.props.UIStore.dragOnId);
+    if(!val){
+      const url = sourceData.url && sourceData.url.indexOf('&') !=-1 && sourceData.url.split('&')[0] || sourceData.url;
+      this.store.setDragData({
+        url: url
+      });
+    }else{
+      const afterGetBratchData = sourceData.afterGetBratchData || '';
+      const leftUrl = afterGetBratchData && JSON.stringify({
+              dataType:afterGetBratchData.dataType || '',
+              dataTitle:afterGetBratchData.dataTitle || '',
+              dataUrl:afterGetBratchData.url || ''
+      }) || '';
+      this.store.setDragData({
+        url: `${sourceData.url}${leftUrl ? '&targetPage='+leftUrl : ''}`
+      });
+    };
   }
   // 设置 领取代金券 后 跳转页面 type
   handleSelectCgForBrath = (val) => {
@@ -132,10 +173,10 @@ class CfgPanel extends Component {
     const sourceData = this.store.getDragItem(this.props.UIStore.dragOnId);
     const temObj = sourceData.afterGetBratchData || {};
     temObj.typeData = JSON.parse(val);
-    const dataType = temObj.typeData.value;
-    this.store.setDragData({
-      dataType: dataType
-    });
+    temObj.dataType = temObj.typeData.value;
+    // this.store.setDragData({
+    //   dataType: dataType
+    // });
     this.store.setDragData({ afterGetBratchData: temObj });
     const dragId = this.store.dragOnId;
     this.store.setDragId('');
@@ -149,6 +190,16 @@ class CfgPanel extends Component {
     temObj[tType] = e.target.value;
     this.store.setDragData({
       afterGetBratchData: temObj
+    });
+    //组装 领取代金券后的 跳转url 
+    const targetPage = JSON.stringify({
+      dataType:temObj.dataType || '',
+      dataTitle:temObj.dataTitle || '',
+      dataUrl:temObj.url || ''
+    });
+    const urlData = sourceData.url && `${sourceData.url}&targetPage=${targetPage}`;
+    tType === 'url' && this.store.setDragData({
+      url:urlData
     });
     const dragId = this.store.dragOnId;
     this.store.setDragId('');
@@ -166,9 +217,10 @@ class CfgPanel extends Component {
     // 是不是 代金券 页面 
     const isBatchId = typeData.targetPage || '';
     // 是不是设置 领取代金券的后的 目标页面 datatype datatitl 
-    const isSetTargetPage = sourceData && sourceData.isSetTargetPage || '';
+    const isSetTargetPage = sourceData && sourceData.isSetTargetPage || false;
     // 领取代金券后 跳转页面的配置参数
     const afterGetBratchData = sourceData && sourceData.afterGetBratchData || '';
+    console.log(afterGetBratchData);
     // 领取代金券后 跳转页面的 typeData
     const bratch_select = afterGetBratchData && afterGetBratchData.typeData || '选择领取代金券后跳转页面类型';
     const bratch_selectVal = Object.prototype.toString.call(bratch_select) === '[object Object]' && JSON.stringify(bratch_select) || bratch_select;
@@ -218,8 +270,14 @@ class CfgPanel extends Component {
                   data-type="url"
                   placeholder={typeData.inputUrlTip}
                   onChange={this.handleInputCg}
-                  value={sourceData.url}
-                  defaultValue={sourceData.url}
+                  value={this.dataCoperation(sourceData.url,function (val){
+                    console.log(val);
+                    return val && val.length && val.indexOf('?') != -1 && val.split('?')[1].split('&')[0].split('=')[1] || val;
+                  })}
+                  defaultValue={this.dataCoperation(sourceData.url,function (val){
+                    console.log(val);
+                    return val && val.length && val.indexOf('?') != -1 && val.split('?')[1].split('&')[0].split('=')[1] || val;
+                  })}
                   autosize={{ minRows: 2, maxRows: 6 }}
                 />
               </FormItem>
@@ -231,9 +289,9 @@ class CfgPanel extends Component {
             isBatchId && (
               <div>
                 <div>*配置领取代金券后 ,跳转地址</div>
-                <Switch defaultChecked={false} onChange={this.handleSwitch} />
+                <Switch defaultChecked={isSetTargetPage} onChange={this.handleSwitch} />
                 {
-                  isSetTargetPage && <FormItem {...formItemLayout} label="*跳转类型：">
+                  isSetTargetPage && <FormItem {...formItemLayout} label="*选择领取代金券后跳转页面类型:">
                     <Select
                       showSearch
                       placeholder="选择跳转页面类型"

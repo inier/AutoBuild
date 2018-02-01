@@ -15,7 +15,7 @@ var base64 = require('./utils/base64');
 // 引入 生成 html 脚本 js
 var build = require('./components/AutoBuild/index');
 //var imgZone = require("./utils/imgZip");
-var imgZone = require('./utils/compress');
+var imgZone = require('./utils/imgCompress');
 
 //引入配置文件
 var config = require('./config');
@@ -157,8 +157,8 @@ app.post('/getjson', (req, res) => {
       res.send({
         result: 0,
         data: {
-          previewUrl: `http://${host}:${port}/preview_${pageType}/index.html`,
-          downloadUrl: `http://${host}:${port}/${pageType}.zip`//'./app.zip'
+          previewUrl: `/preview_${pageType}/index.html`,
+          downloadUrl: `/${pageType}.zip`//'./app.zip'
         }
       });
       // res.download(`./${zipFileName}.zip`,(err)=>{

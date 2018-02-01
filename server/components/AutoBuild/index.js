@@ -44,7 +44,7 @@ const SRC = './components/AutoBuild';
 const DIST = './components/AutoBuild/public';
 
 function buildHtml(opt) {
-  console.log(opt, opt.configData);
+  //console.log(opt, opt.configData);
   //编译版本，app还是pc============
   var edition = opt.pageType;
 

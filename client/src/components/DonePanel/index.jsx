@@ -22,7 +22,8 @@ class DonePanel extends Component {
       const parentHeight = elm.height || "";
       const index_idx = idx;
       const arr = [];
-      // 轮询 点击区域
+      // 轮询 点击区域 
+      // 需判断是不是代金券  配置，是代金券需要对数据 组装
       elm.clkArr &&
         elm.clkArr.map((elmt, index) => {
           const width = `${(elmt.width / parentWidth * 100).toFixed(2)}%`;
@@ -112,7 +113,7 @@ class DonePanel extends Component {
           下载<Icon type="download" />
         </Button>
         {this.props.UIStore.imgSrc.length && <Popconfirm title="各项配置是否已完成?" onConfirm={this.confirm} onCancel={this.cancel} okText="确定" cancelText="稍等">
-          <Button type="primary" onClick={this.getLayData}>
+          <Button type="primary" >
             构建<Icon type="caret-right" />
           </Button>
         </Popconfirm>}

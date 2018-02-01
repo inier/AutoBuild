@@ -2,7 +2,14 @@
   "name": "pc-template",
   "version": "0.1.0",
   "private": true,
-  "proxy": "http://localhost:8080",
+  "proxy": {
+    "/api": {
+      "target": "http://localhost:11112",
+      "pathRewrite": {
+        "^/api": ""
+      }
+    }
+  },
   "dependencies": {
     "antd": "^3.1.4",
     "babel-plugin-transform-decorators-legacy": "^1.3.4",

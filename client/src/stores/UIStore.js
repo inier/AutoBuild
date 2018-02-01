@@ -105,7 +105,7 @@ class UIStore {
   delListItem = (id) => {
     // 需要判断删除的 楼层中是不是 dragOnId 
     const delFloorData = this.getListItem(id);
-    const isFindDragdIdInDelData = (delFloorData.clkArr.length && delFloorData.clkArr.filter((elm, idx) => {
+    const isFindDragdIdInDelData = (delFloorData.clkArr && delFloorData.clkArr.length && delFloorData.clkArr.filter((elm, idx) => {
       return elm.id === this.dragOnId;
     })) || '';
 
@@ -352,8 +352,8 @@ class UIStore {
         //console.log("Success");
         //console.log(result);
         if (result.result == 0 && result.data) {          
-          result.data.downloadUrl && this.setDownloadUrl(result.data.downloadUrl);
-          result.data.previewUrl && this.setPreviewUrl(result.data.previewUrl);
+          result.data.downloadUrl && this.setDownloadUrl(ApiUrls.BASE + result.data.downloadUrl);
+          result.data.previewUrl && this.setPreviewUrl(ApiUrls.BASE + result.data.previewUrl);
           message.success("构建完成！可直接预览或下载专题包，感谢使用！");
         }
       },

@@ -30,18 +30,20 @@ class PcCfgPanel extends Component{
           this.store.setDragId('');
           this.store.setDragId(dragId);
     }
+
     render(){
         // 根据 点击区域id 获取 dataType 属性等。。。
         const sourceData = this.store.getDragItem(this.props.UIStore.dragOnId);
         const url = sourceData && sourceData.url || '';
+        const showUrl = url.indexOf('?') != -1 && url.split('?')[1].split('&')[0].split('=')[1] || '';
         return (
             <Form.Item {...formItemLayout} label="跳转链接：">
             <TextArea
                 data-type="url"
                 placeholder="请输入跳转页面的链接"
                 onChange={this.handleInputCg}
-                //value={url}
-                defaultValue={url}
+                value={url}
+                //defaultValue={url}
                 autosize={{ minRows: 2, maxRows: 6 }}
                 />
         </Form.Item>
