@@ -9,10 +9,10 @@ class UIStore {
     this.rootStore = rootStore;
     this.persistData = persistData;
 
-    this.persistData.set('pageType', this);
-    this.persistData.set('pageTitle', this);
-    this.persistData.set('pageKeyword', this);
-    this.persistData.set('pageDescription', this);
+    this.persistData.set("pageType", this);
+    this.persistData.set("pageTitle", this);
+    this.persistData.set("pageKeyword", this);
+    this.persistData.set("pageDescription", this);
     //设置初始值
     // this.initData("pageType", "pc");
     // this.initData("pageTitle", "");
@@ -23,17 +23,17 @@ class UIStore {
   /**
    * 专题页面信息相关
    */
-  @observable pageType = this.persistData.get('pageType', this); // 网页 类型 app ，pc
-  @observable pageTitle = this.persistData.get('pageTitle', this); // 网页 title
-  @observable pageKeyword = this.persistData.get('pageKeyword', this); // 网页 keyword
-  @observable pageDescription = this.persistData.get('pageDescription', this); // 网页 description
+  @observable pageType = this.persistData.get("pageType", this); // 网页 类型 app ，pc
+  @observable pageTitle = this.persistData.get("pageTitle", this); // 网页 title
+  @observable pageKeyword = this.persistData.get("pageKeyword", this); // 网页 keyword
+  @observable pageDescription = this.persistData.get("pageDescription", this); // 网页 description
 
   @observable imgSrc = []; //选配数据集合
-  @observable floorOnId = ''; //激活的楼层Id
-  @observable dragOnId = ''; //激活的拖拽块Id
+  @observable floorOnId = ""; //激活的楼层Id
+  @observable dragOnId = ""; //激活的拖拽块Id
 
-  @observable downloadUrl = ''; // 下载地址
-  @observable previewUrl = ''; // 预览地址
+  @observable downloadUrl = ""; // 下载地址
+  @observable previewUrl = ""; // 预览地址
 
   @action
   initData(key, value) {
@@ -79,12 +79,12 @@ class UIStore {
   };
 
   //ListItem相关
-  getListItemIndex = (id) => {
+  getListItemIndex = id => {
     return this.getIndexById(id, true);
   };
 
-  // List获取 
-  getListItem = (id) => {
+  // List获取
+  getListItem = id => {
     return this.imgSrc[this.getListItemIndex(id)];
   };
 
@@ -102,37 +102,41 @@ class UIStore {
   };
 
   //删除List中的指定项
-  delListItem = (id) => {
-    // 需要判断删除的 楼层中是不是 dragOnId 
+  delListItem = id => {
+    // 需要判断删除的 楼层中是不是 dragOnId
     const delFloorData = this.getListItem(id);
-    const isFindDragdIdInDelData = (delFloorData.clkArr && delFloorData.clkArr.length && delFloorData.clkArr.filter((elm, idx) => {
-      return elm.id === this.dragOnId;
-    })) || '';
+    const isFindDragdIdInDelData =
+      (delFloorData.clkArr &&
+        delFloorData.clkArr.length &&
+        delFloorData.clkArr.filter((elm, idx) => {
+          return elm.id === this.dragOnId;
+        })) ||
+      "";
 
     //var isFindDragdIdInDelData = !!this.getSubListItemIndex(this.dragOnId);
-    isFindDragdIdInDelData.length && this.setDragId('');
+    isFindDragdIdInDelData.length && this.setDragId("");
 
     this.imgSrc.splice(this.getListItemIndex(id), 1);
 
     // 实时设置 floorOnId
-    (!this.imgSrc.length || id == this.floorOnId) && this.setFloorOnId('');
+    (!this.imgSrc.length || id == this.floorOnId) && this.setFloorOnId("");
   };
 
   // subList相关
-  getSubListItemIndex = (id) => {
+  getSubListItemIndex = id => {
     return this.getIndexById(id);
   };
   /**
-    * 获取clkArr中的列表项
-    */
+   * 获取clkArr中的列表项
+   */
   getSubListItem = (id = this.dragOnId, parentId = this.floorOnId) => {
     if (!id) {
       return {};
     }
     if (!parentId) {
-      message.error('该操作需要先选中楼层!');
+      message.error("该操作需要先选中楼层!");
       return;
-    };
+    }
 
     const tResult = this.imgSrc.slice().filter((item, pIndex) => {
       return item.id === parentId;
@@ -147,9 +151,9 @@ class UIStore {
 
   setSubListItem = (data, id = this.dragOnId, parentId = this.floorOnId) => {
     if (!parentId) {
-      message.error('该操作需要先选中楼层!');
+      message.error("该操作需要先选中楼层!");
       return;
-    };
+    }
 
     var pList = [].concat(this.imgSrc.slice());
     var pIndex = this.getListItemIndex(parentId);
@@ -158,7 +162,8 @@ class UIStore {
     if (pList[pIndex]["clkArr"]) {
       for (var prop in data) {
         if (data.hasOwnProperty(prop)) {
-          typeof data[prop] != 'undefined' && (pList[pIndex]["clkArr"][cIndex][prop] = data[prop]);
+          typeof data[prop] != "undefined" &&
+            (pList[pIndex]["clkArr"][cIndex][prop] = data[prop]);
         }
       }
     }
@@ -170,9 +175,9 @@ class UIStore {
   // item: {k:v}
   addSubListItem = (data, parentId = this.floorOnId) => {
     if (!parentId) {
-      message.error('该操作需要先选中楼层!');
+      message.error("该操作需要先选中楼层!");
       return;
-    };
+    }
     var pList = [].concat(this.imgSrc.slice());
 
     var pIndex = this.getListItemIndex(parentId);
@@ -186,9 +191,9 @@ class UIStore {
 
   delSubListItem = (id, parentId) => {
     if (!parentId) {
-      message.error('该操作需要先选中楼层!');
+      message.error("该操作需要先选中楼层!");
       return;
-    };
+    }
     var pList = [].concat(this.imgSrc.slice());
     var pIndex = this.getListItemIndex(parentId);
     var cList = pList[pIndex].clkArr;
@@ -199,7 +204,7 @@ class UIStore {
     }
 
     const tDragId = this.dragOnId;
-    tDragId == id && this.setDragId('');
+    tDragId == id && this.setDragId("");
 
     this.imgSrc = pList;
   };
@@ -280,7 +285,7 @@ class UIStore {
   };
 
   @action
-  getDragItem = (id) => {
+  getDragItem = id => {
     return this.getSubListItem(id);
   };
 
@@ -292,7 +297,7 @@ class UIStore {
   };
 
   @action
-  addDragData = (data) => {
+  addDragData = data => {
     this.addSubListItem(data);
   };
 
@@ -312,8 +317,7 @@ class UIStore {
       // this.setSubListItem({
       //   isActive: !this.getDragItem(id).isActive
       // }, id, parentId);
-    }
-    else if (id === this.dragOnId) {
+    } else if (id === this.dragOnId) {
       //this.setDragId("");
       // this.setSubListItem({
       //   isActive: !this.getDragItem(id).isActive
@@ -327,15 +331,14 @@ class UIStore {
   };
 
   @action
-  setDownloadUrl = (str) => {
+  setDownloadUrl = str => {
     this.downloadUrl = str;
   };
 
   @action
-  setPreviewUrl = (str) => {
+  setPreviewUrl = str => {
     this.previewUrl = str;
   };
-
 
   /**
    * 提交构建数据接口
@@ -343,7 +346,7 @@ class UIStore {
    */
   DoneIt(data) {
     if (!data) {
-      message.error('请先确认传入的参数是否正确!');
+      message.error("请先确认传入的参数是否正确!");
       return;
     }
     return this.rootStore.sendPost(ApiUrls.DONE, data).then(
@@ -351,13 +354,15 @@ class UIStore {
         if (!result.data) return;
         //console.log("Success");
         //console.log(result);
-        if (result.result == 0 && result.data) {          
-          result.data.downloadUrl && this.setDownloadUrl(ApiUrls.BASE + result.data.downloadUrl);
-          result.data.previewUrl && this.setPreviewUrl(ApiUrls.BASE + result.data.previewUrl);
+        if (result.result == 0 && result.data) {
+          result.data.downloadUrl &&
+            this.setDownloadUrl(ApiUrls.BASE + result.data.downloadUrl);
+          result.data.previewUrl &&
+            this.setPreviewUrl(ApiUrls.BASE + result.data.previewUrl);
           message.success("构建完成！可直接预览或下载专题包，感谢使用！");
         }
       },
-      function (err, msg) {
+      function(err, msg) {
         //console.log(err);
         message.error(msg);
       }
@@ -376,7 +381,7 @@ class UIStore {
         if (result.result == 0 && result.data) {
         }
       },
-      function (err, msg) {
+      function(err, msg) {
         console.log(err);
         console.log(msg);
       }

@@ -22,7 +22,7 @@ class DonePanel extends Component {
       const parentHeight = elm.height || "";
       const index_idx = idx;
       const arr = [];
-      // 轮询 点击区域 
+      // 轮询 点击区域
       // 需判断是不是代金券  配置，是代金券需要对数据 组装
       elm.clkArr &&
         elm.clkArr.map((elmt, index) => {
@@ -79,17 +79,19 @@ class DonePanel extends Component {
     }
   };
 
-  confirm = (e) => {
-    message.warning('开始构建，先休息一会儿吧！');
+  confirm = e => {
+    message.warning("开始构建，先休息一会儿吧！");
     this.getLayData();
-  }
+  };
 
-  cancel = (e) => {
+  cancel = e => {
     //console.log(e);
-    message.info('革命尚未成功，同志仍需努力！');
-  }
+    message.info("革命尚未成功，同志仍需努力！");
+  };
 
   render() {
+    const downUrl = this.props.UIStore.downloadUrl;
+    const downfileName = downUrl.substr(downUrl.lastIndexOf("/") + 1);
     return (
       <span className="done-panel">
         <Button
@@ -103,20 +105,28 @@ class DonePanel extends Component {
           预览<Icon type="aliyun" />
         </Button>
         <Button
-          href={this.props.UIStore.downloadUrl}
+          href={downUrl}
           style={{
-            display: this.props.UIStore.downloadUrl ? "inline-block" : "none"
+            display: !!downUrl ? "inline-block" : "none"
           }}
           className="mr download"
-          download={this.props.UIStore.downloadUrl}
+          download={downfileName}
         >
           下载<Icon type="download" />
         </Button>
-        {this.props.UIStore.imgSrc.length && <Popconfirm title="各项配置是否已完成?" onConfirm={this.confirm} onCancel={this.cancel} okText="确定" cancelText="稍等">
-          <Button type="primary" >
-            构建<Icon type="caret-right" />
-          </Button>
-        </Popconfirm>}
+        {this.props.UIStore.imgSrc.length && (
+          <Popconfirm
+            title="各项配置是否已完成?"
+            onConfirm={this.confirm}
+            onCancel={this.cancel}
+            okText="确定"
+            cancelText="稍等"
+          >
+            <Button type="primary">
+              构建<Icon type="caret-right" />
+            </Button>
+          </Popconfirm>
+        )}
         {/* <button onClick = {this.storageData.bind(this)}>保存当前配置数据</button> */}
       </span>
     );
