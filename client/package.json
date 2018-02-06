@@ -4,7 +4,7 @@
   "private": true,
   "proxy": {
     "/api": {
-      "target": "http://localhost:11112",
+      "target": "http://127.0.0.1:11112",
       "pathRewrite": {
         "^/api": ""
       }

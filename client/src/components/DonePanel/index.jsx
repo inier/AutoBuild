@@ -90,21 +90,27 @@ class DonePanel extends Component {
   };
 
   render() {
+    const imgLength = this.props.UIStore.imgSrc.length;
+    if (imgLength == 0) {
+      this.props.UIStore.setPreviewUrl("");
+      this.props.UIStore.setDownloadUrl("");
+    }
+    const previewUrl = this.props.UIStore.previewUrl;
     const downUrl = this.props.UIStore.downloadUrl;
     const downfileName = downUrl.substr(downUrl.lastIndexOf("/") + 1);
     return (
       <span className="done-panel">
-        <Button
-          href={this.props.UIStore.previewUrl}
+        {this.props.UIStore.imgSrc.length && (<Button
+          href={previewUrl}
           style={{
-            display: this.props.UIStore.previewUrl ? "inline-block" : "none"
+            display: !!previewUrl ? "inline-block" : "none"
           }}
           className="mr preview"
           target="_blank"
         >
           预览<Icon type="aliyun" />
-        </Button>
-        <Button
+        </Button>)}
+        {this.props.UIStore.imgSrc.length && (<Button
           href={downUrl}
           style={{
             display: !!downUrl ? "inline-block" : "none"
@@ -113,7 +119,7 @@ class DonePanel extends Component {
           download={downfileName}
         >
           下载<Icon type="download" />
-        </Button>
+        </Button>)}
         {this.props.UIStore.imgSrc.length && (
           <Popconfirm
             title="各项配置是否已完成?"
