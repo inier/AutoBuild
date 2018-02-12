@@ -6,12 +6,13 @@ var fs = require('fs');
  * @param isPc {Boolean} 端类型，true -->pc端  false--->app端
  * @param path {String} 写入文件路径
  */
-function base642Img(source, isPc, path) {
+function base642Img(source, isPc, path,cb) {
   var type = isPc ? 'pc' : 'app';
 
   // 首先要判断 path 下面是不是 是不是 文件夹，如果是，先删除文件夹
   // 写入文件夹目录 ========= path
-  const writeBasePath = `${path}/${type}`;
+  //const writeBasePath = `${path}/${type}`;
+  const writeBasePath = `${path}`;
 
   //检查某个目录是否存在
   var stat = fs.statSync(writeBasePath);
@@ -47,6 +48,7 @@ function base642Img(source, isPc, path) {
       console.log(`根据base64，写入图片成功,path:${path}/${type}/img_0${idx}.jpg`);
     })
   })
+  cb && typeof cb === 'function' && cb();
   // 图片写入成功后
 }
 

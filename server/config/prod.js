@@ -4,7 +4,7 @@
  */
 var config = {
   env: "production", //环境名称
-  host: "127.0.0.1", //服务器地址
+  host: "10.64.14.107", //服务器地址
   port: 11112, //服务端口号
   mysql_config: {
     //mysql数据库配置

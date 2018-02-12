@@ -97,7 +97,7 @@ class DonePanel extends Component {
     }
     const previewUrl = this.props.UIStore.previewUrl;
     const downUrl = this.props.UIStore.downloadUrl;
-    const downfileName = downUrl.substr(downUrl.lastIndexOf("/") + 1);
+    const downfileName = downUrl.substr(downUrl.lastIndexOf("/") + 1).split('?')[0];
     return (
       <span className="done-panel">
         {this.props.UIStore.imgSrc.length && (<Button

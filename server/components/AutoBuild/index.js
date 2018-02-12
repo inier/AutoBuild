@@ -40,10 +40,11 @@ var imgUrl = [];
 // title,discription,kewword;
 var headHTMLAttr = {};
 
-const SRC = './components/AutoBuild';
+const SRC = './components/build';
 const DIST = './components/AutoBuild/public';
 
 function buildHtml(opt) {
+   const basePath = `./build/${opt.hash}`;
   //console.log(opt, opt.configData);
   //编译版本，app还是pc============
   var edition = opt.pageType;
@@ -54,29 +55,30 @@ function buildHtml(opt) {
   // title,discription,kewword;
   //var headHTMLAttr={};
   /// 执行所有方法，get page==================================
-  imgUrl = getImgAtr(`${SRC}/img/${edition}`);
+  imgUrl = getImgAtr(`${basePath}/${edition}/img`);
 
   // 得到配置 json ，吧 imgUrl 和json组合起来  //'autoBuild/src/json/'
-  combinationData(getConfigureJson, opt.configData || `${SRC}/json/${edition}.json`);
+  combinationData(getConfigureJson, opt.configData || `./components/AutoBuild/json/${edition}.json`);
   // 生成 css，文件
-  createScss(`${DIST}/${edition}/css/index.css`, buildScssData);
+  //createScss(`${DIST}/${edition}/css/index.css`, buildScssData);
+  createScss(`${basePath}/${edition}/css/index.css`, buildScssData);
   //创建 img文件夹=====
-  createAdir(`${DIST}/${edition}/img`);
+  //createAdir(`${DIST}/${edition}/img`);
   // 复制图片====
-  copyImg(`${SRC}/img/${edition}`, `${DIST}/${edition}/img`);
+  //copyImg(`${SRC}/img/${edition}`, `${DIST}/${edition}/img`);
 
-  ///读取 html文件========================
-  var contHTML = fs.readFileSync(`${SRC}/tpl/${edition}.html`);
+  ///读取 html 模板文件========================
+  var contHTML = fs.readFileSync(`./components/AutoBuild/tpl/${edition}.html`);
 
   $ = cheerio.load(contHTML);
   // 操作html，模板===================，填充内容
 
   initHTML(imgUrl, edition);
   //生成 目标，html
-  createHTML(`${DIST}/${edition}/index.html`);
+  createHTML(`${basePath}/${edition}/index.html`);
   // 执行回调，返回生成 文件夹的路径============
-  const tragetPath = `${DIST}/${edition}`;
-  typeof opt.callback === 'function' && opt.callback(tragetPath);
+  //const tragetPath = `${DIST}/${edition}`;
+  typeof opt.callback === 'function' && opt.callback();
 }
 
 /*
@@ -105,16 +107,21 @@ function getImgAtr(path) {
   console.log('开始读取图片属性...');
   // fs 模块 读取img 文件下面所有的图片，
   var files = fs.readdirSync(path);// 文件读取顺序 、？？？
+  console.log(`读取到上传图片的 ：${files}`);
   var imgUrl = [];
   files.forEach(function (item, index) {
-    var width = image(path + '/' + item).width(),
-      height = image(path + '/' + item).height(),
-      imgAttr = {
-        width: width,
-        height: height,
-        imgUrl: 'img/' + item + '?ver=' + new Date().getTime()
-      };
-    imgUrl.push(imgAttr);
+    const tPath  = path + '/' + item;
+    const stat = fs.statSync(tPath);
+    if(stat.isFile()){
+      var width = image(tPath).width(),
+          height = image(tPath).height(),
+          imgAttr = {
+            width: width,
+            height: height,
+            imgUrl: 'img/' + item + '?ver=' + new Date().getTime()
+          };
+      imgUrl.push(imgAttr);
+    }
   })
   return imgUrl;
 }
@@ -266,7 +273,7 @@ function initHTML(data, isPc) {
     html += '<div class="img-box"><img src="' + item.imgUrl + '" alt="">' + ahtml + '</div>'
   });
 
-  $('.content').html(html);
+  $('.content').html(html); 
 
   var allClkA = $('.img-box .btn');
   var arr = Array.prototype.slice.apply(allClkA)

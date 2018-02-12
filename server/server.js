@@ -1,4 +1,10 @@
 // server.js
+
+
+var crypto = require('crypto');
+//var name = 'braitsch';
+// var hash = crypto.createHash('md5').update(name).digest('hex');
+// console.log(hash); // 9b74c9897bac770ffc029102a200c5de
 // 创建一个服务器
 var express = require('express');
 var fs = require('fs');
@@ -16,6 +22,9 @@ var base64 = require('./utils/base64');
 var build = require('./components/AutoBuild/index');
 //var imgZone = require("./utils/imgZip");
 var imgZone = require('./utils/imgCompress');
+
+// 引入 复制文件 及文件夹 工具
+const copyFile = require('./utils/copyFile');
 
 //引入配置文件
 var config = require('./config');
@@ -67,10 +76,23 @@ app.post('/postImgLocal', (req, res) => {
   res.send({ code: 200, msg: "post请求成功" });
 })
 
-app.use('/preview_pc', express.static(path.join(__dirname, '/components/AutoBuild/public/pc')));
+app.use('/preview', express.static(path.join(__dirname, '/build')));
 
-app.use('/preview_app', express.static(path.join(__dirname, '/components/AutoBuild/public/app')));
-
+// app.get('/preview_pc/index.html',(req,res) => {
+//   const hash = req.url.split('?')[1].split('=')[1];
+//   console.log(hash);
+//   const pathname = `./build/${hash}/pc/index.html`
+//   app.use('/preview_pc', express.static(path.join(__dirname, `/build/${hash}/pc`)));
+//   fs.readFile(pathname, (err, data) => {
+//     if (err) {
+//       res.writeHead(404, { "Content-Type": "text/html" });
+//       res.end('<h1>404 Not Found</h1>');
+//       console.log(err);
+//     }
+//     //res.writeHead(200, { "Content-Type": "text/html" });
+//     res.end(data);
+//   });
+// })
 
 app.get('/*.js', (req, res) => {
   const path = req.path;
@@ -114,69 +136,127 @@ app.post("/post", function (req, res) {
 
 // 前台传过来的 数据，这里调用脚本，利用数据 生成 html
 app.post('/getjson', (req, res) => {
+  // 操作步奏，同步
+  // 1 data 生成 hash，文件夹，如果这个文件夹 存在那么就跳过
+  // 2,根据 生成专题页 类 生成 文件夹 pc 或则 app
+  // 3，复制 基础文件 到 hash/pc(app) 文件夹
+  // 4,根据 client 传过来的数据，生成 图片
+  // 5，调用 生成专题页 工具 
+  // 6,压缩图片
+  // 7,给给 client 端 生成的 hash 
+
+  //复制源基本路径
+  const copyBasePath = './components/AutoBuild/public';
+  //复制 目的 基本路径
+  const targBasePath = './build';
   //console.log("请求参数：",req.body)
   var data = JSON.parse(req.body.data)
-  //     var result = {
-  //        result:0,
-  //        data:data
-  //    }
-  // 1-->pc,; 2-->app
-  const isPc = Number(req.body.isPc) === 1;
-  const writePath = `${autoBuildBasePath}/img`;
-
-  //res.send(result)
+  
+  // // 1-->pc,; 2-->app
+  const isPc = Number(req.body.isPc) == 1;
   const pageType = isPc ? 'pc' : 'app';
 
-  //    res.send({
-  //        result:0
-  //    })
-  ///
-  base64.base642Img(data, isPc, writePath);
+  //根据 client 的数据 hash
+  var dataHash = crypto.createHash('md5').update(JSON.stringify(req.body)).digest('hex');
+  console.log(`根据布局数据 生成hash：${dataHash}`); // 9b74c9897bac770ffc029102a200c5de
+  
+  const hashPath = `${targBasePath}/${dataHash}`;
+  // 利用catch 模块判断是不是 hash 文件的存在
+  const isEisit = fs.existsSync(hashPath);
+  if(isEisit){
+    res.send({
+      result: 0,
+       data: {
+            previewUrl: `/preview/${dataHash}/${pageType}/index.html`,
+            downloadUrl: `/${pageType}.zip?hash=${dataHash}`,//'./app.zip'
+            id:dataHash
+          }
+      })
+    res.end();
+  }else{
+    fs.mkdirSync(hashPath);// build hash dir
+    fs.mkdirSync(`${hashPath}/${pageType}`)// build pc or app dir
+    // 复制基础文件 到 生成的 文件路径
+    copyFile(`${copyBasePath}/${pageType}`,`${hashPath}/${pageType}`);
 
-  const configData = {
-    data: data,
-    title: req.body.title || '',
-    description: req.body.description || '',
-    keyword: req.body.keyword || ''
-  }
-
-  const options = {
-    pageType: pageType,
-    configData: configData,
-    callback: function (tPath) {
-      console.log(`返回生成目标文件夹路径 :${tPath}`)
-      const zipOutFile = `${downDIST}/${pageType}`;
-
-      imgZone(`${tPath}/img`, `${tPath}/img`, {
-        quality: '65-80'
-      }, function () {
-        console.log("图片压缩成功！！");
-        dozip.dozip(tPath, zipOutFile);
-      });
-
-      res.send({
-        result: 0,
-        data: {
-          previewUrl: `/preview_${pageType}/index.html`,
-          downloadUrl: `/${pageType}.zip`//'./app.zip'
-        }
-      });
-      // res.download(`./${zipFileName}.zip`,(err)=>{
-      //     if(err){
-      //         console.log('下载文件失败');
-      //     }else{
-      //         console.log('下载文件成功');
-      //     }
-      // })
+    
+    
+    //调用 工具生成 html，css
+    const configData = {
+      data: data,
+      title: req.body.title || '',
+      description: req.body.description || '',
+      keyword: req.body.keyword || ''
     }
+
+    const options = {
+      hash:dataHash,
+      pageType: pageType,
+      configData: configData,
+      callback: function (tPath) {
+        
+        console.log(`返回生成目标文件夹路径 :${hashPath}/${pageType}/index.html`)
+        const zipOutFile = `${hashPath}/${pageType}`;
+
+        // imgZone(`${tPath}/img`, `${tPath}/img`, {
+        //   quality: '65-80'
+        // }, function () {
+        //   console.log("图片压缩成功！！");
+        //   dozip.dozip(tPath, zipOutFile);
+        // });
+        imgZone(`${hashPath}/${pageType}/img`, `${hashPath}/${pageType}/img`, {
+          quality: '65-80'
+        }, function () {
+          console.log("图片压缩成功！！");
+          dozip.dozip(zipOutFile, zipOutFile);
+        });
+        res.send({
+          result: 0,
+          data: {
+            previewUrl: `/preview/${dataHash}/${pageType}/index.html`,
+            downloadUrl: `/${pageType}.zip?hash=${dataHash}`,//'./app.zip'
+            id:dataHash
+          }
+        });
+      }
+    }
+    //根据 base64 生成 图片
+    base64.base642Img(data, isPc, `${hashPath}/${pageType}/img`,function (){
+      build.buildHtml(options);
+    });
+    
   }
+  // try{
+  //   const isBuildfile = fs.readdirSync(hashPath);
+  //   cosnole.log(`is this dir exisit ${isBuildfile}`);
+  //   res.send({result: 0});
+  // }catch(e){
+  //   // 没有生成过，那么就直接生成
+  //   fs.mkdirSync(hashPath);// build hash dir
+  //   fs.mkdirSync(`${hashPath}/${pageType}`)// build pc or app dir
+  // }
+  
+  //创建 文件夹 ===== autoBuildBasePath/build/dataHash
+  // 1 判断 有没有build 文件夹，2 build 下面有没有相同的文件，有了相同hash这不重新生成，
+  //const buildPath = `${autoBuildBasePath}/build`
+  // 根据 hash 生成 hash 文件夹
+  //const hashDirPath = `${buildPath}/${dataHash}`
+  // 文件夹 存在？
+  
+  //const writePath = `${autoBuildBasePath}/img`;
+ 
+  //base64.base642Img(data, isPc, writePath);
+
+
 
   // 调用模块，生成 文件
-  build.buildHtml(options);
+  //build.buildHtml(options);
+
 });
 
 // 编写 下载接口 
 app.get('/app.zip', (req, res) => {
+  console.log(req);
   // fs.readFileSync('./app.zip',(err,data)=>{
   //     res.send(data)
   // })
@@ -189,7 +269,9 @@ app.get('/app.zip', (req, res) => {
   // fReadStream.on("end",function () {
   //     res.end();
   // });
-  res.download(`${downDIST}/app.zip`, function (err) {
+  // 得到hash
+  const hash = req.url.split('?')[1].split('=')[1];
+  res.download(`${downDIST}/${hash}/app.zip`, function (err) {
     if (err) {
       console.log('下载app.zip文件失败');
     } else {
@@ -199,7 +281,8 @@ app.get('/app.zip', (req, res) => {
 });
 
 app.get('/pc.zip', (req, res) => {
-  res.download(`${downDIST}/pc.zip`, function (err) {
+  const hash = req.url.split('?')[1].split('=')[1];
+  res.download(`${downDIST}/${hash}/pc.zip`, function (err) {
     if (err) {
       console.log('下载pc.zip文件失败');
     } else {
