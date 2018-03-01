@@ -26,7 +26,8 @@ class DonePanel extends Component {
       // 需判断是不是代金券  配置，是代金券需要对数据 组装
       elm.clkArr &&
         elm.clkArr.map((elmt, index) => {
-          const width = `${(elmt.width / parentWidth * 100).toFixed(2)}%`;
+          const widthRate = Number(elmt.width / parentWidth);
+          const width = `${( (widthRate > 1 ? 1:widthRate ) * 100).toFixed(2)}%`;
           const height = `${(elmt.height / parentHeight * 100).toFixed(2)}%`;
           const left = `${(elmt.left / parentWidth * 100).toFixed(2)}%`;
           const top = `${(elmt.top / parentHeight * 100).toFixed(2)}%`;
